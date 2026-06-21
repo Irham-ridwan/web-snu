@@ -16,13 +16,18 @@ function isActive(href: string) {
   <div class="p-1 rounded-full border border-[var(--color-border)] bg-[var(--color-surface)]/80 backdrop-blur-md shadow-[0_8px_20px_-6px_rgba(0,0,0,0.3)] transition-all duration-300">
     <div class="flex h-14 items-center justify-between gap-4 px-4 rounded-full bg-[var(--color-surface-2)]/30 border border-[var(--color-border)]/20">
       
-      <a href="/" class="flex items-center gap-2.5 group" aria-label={`${SITE.name} — beranda`}>
-        <span
-          class="flex h-8.5 w-8.5 items-center justify-center rounded-full bg-[var(--color-primary)] font-serif text-[13px] font-semibold text-[var(--color-primary-foreground)] transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:scale-105"
-          aria-hidden="true">SN</span>
+      <a href="/" class="flex items-center gap-3 group" aria-label={`${SITE.name} — beranda`}>
+        <!-- Mystical gold mandala flower SVG logo -->
+        <div class="relative flex items-center justify-center h-9 w-9 rounded-full bg-[var(--color-surface-2)]/30 border border-[var(--color-primary)]/10 p-1 transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:scale-105">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" class="transition-transform duration-700 ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:rotate-90">
+            <path d="M12 2C9.5 4.5 9.5 7.5 12 10c2.5-2.5 2.5-5.5 0-8ZM12 22c2.5-2.5 2.5-5.5 0-8-2.5 2.5-2.5 5.5 0 8ZM2 12c2.5 2.5 5.5 2.5 8 0-2.5-2.5-5.5-2.5-8 0ZM22 12c-2.5-2.5-5.5-2.5-8 0 2.5 2.5 5.5 2.5 8 0Z" fill="var(--color-primary)" opacity="0.85"></path>
+            <path d="M12 12c1.5-1.5 3.5-1.5 5 0-1.5 1.5-3.5 1.5-5 0ZM12 12c-1.5 1.5-3.5 1.5-5 0 1.5-1.5 3.5-1.5 5 0ZM12 12c1.5 1.5 1.5 3.5 0 5-1.5-1.5-1.5-3.5 0-5ZM12 12c-1.5-1.5-1.5-3.5 0-5 1.5 1.5 1.5 3.5 0 5Z" fill="var(--color-accent)" opacity="0.9"></path>
+            <circle cx="12" cy="12" r="2.5" fill="var(--color-primary)"></circle>
+          </svg>
+        </div>
         <span class="flex flex-col leading-none">
-          <span class="font-serif text-sm font-semibold tracking-tight text-[var(--color-foreground)] transition-colors group-hover:text-[var(--color-primary)]">Sekala Niskala</span>
-          <span class="text-[9px] uppercase tracking-[0.2em] text-[var(--color-muted)] font-mono">Portal</span>
+          <span class="font-serif text-base font-semibold tracking-tight text-[var(--color-foreground)] transition-colors group-hover:text-[var(--color-primary)]">SNU</span>
+          <span class="text-[9px] uppercase tracking-[0.25em] text-[var(--color-muted)] font-mono">Nusantara</span>
         </span>
       </a>
 

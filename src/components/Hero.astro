@@ -1,50 +1,72 @@
 ---
 import { SITE } from "@/config"
 import Button from "@/components/Button.astro"
+
 interface Props {
   eyebrow?: string
   title?: string
   subtitle?: string
 }
+
 const {
   eyebrow = "Sekala · Niskala",
-  title = "Yang tampak, dan yang tak tampak.",
-  subtitle = SITE.description,
+  title = "Sekala Niskala SNU Portal Nusantara",
+  subtitle = "Menjelajahi Jati Diri Melalui Kebajikan Leluhur dan Alam Semesta.",
 } = Astro.props
 ---
 
-<section class="relative min-h-[60vh] flex items-center overflow-hidden border-b border-[var(--color-border)] py-20 sm:py-28">
-  <!-- Drifting Ambient "Kabut Subuh" mesh glows defined in global.css -->
-  <div class="mesh-glow-1 pointer-events-none absolute -top-40 left-1/4 h-[500px] w-[500px] rounded-full bg-[var(--color-primary)]/10 blur-[120px]" aria-hidden="true"></div>
-  <div class="mesh-glow-2 pointer-events-none absolute -top-60 right-1/4 h-[600px] w-[600px] rounded-full bg-[var(--color-accent)]/8 blur-[150px]" aria-hidden="true"></div>
+<section class="relative min-h-[75vh] flex items-center justify-center overflow-hidden border-b border-[var(--color-border)] py-24 sm:py-32">
+  <!-- Mystical Forest Mist Background Image -->
+  <div 
+    class="absolute inset-0 z-0 bg-[url('/hero_bg.jpg')] bg-cover bg-center bg-no-repeat opacity-45"
+    aria-hidden="true"
+  ></div>
+  
+  <!-- Smooth Cinematic Gradient Fading Overlay -->
+  <div 
+    class="absolute inset-0 z-0 bg-gradient-to-b from-transparent via-[var(--color-background)]/70 to-[var(--color-background)]"
+    aria-hidden="true"
+  ></div>
 
-  <div class="relative mx-auto max-w-5xl px-6 w-full">
-    <div class="max-w-3xl text-left">
-      <!-- Monospace Eyebrow Pill -->
-      <span class="inline-flex items-center gap-2 rounded-full border border-[var(--color-border)] bg-[var(--color-surface)]/60 backdrop-blur-md px-3.5 py-1 text-[10px] font-mono uppercase tracking-[0.25em] text-[var(--color-primary)]">
+  <!-- Drifting Ambient glows for volumetric volumetric fog effect -->
+  <div class="mesh-glow-1 pointer-events-none absolute top-1/4 left-1/4 h-[400px] w-[400px] rounded-full bg-[var(--color-accent)]/10 blur-[100px]" aria-hidden="true"></div>
+  <div class="mesh-glow-2 pointer-events-none absolute bottom-1/4 right-1/4 h-[500px] w-[500px] rounded-full bg-[var(--color-primary)]/8 blur-[120px]" aria-hidden="true"></div>
+
+  <div class="relative z-10 mx-auto max-w-5xl px-6 text-center w-full">
+    <div class="max-w-4xl mx-auto flex flex-col items-center">
+      
+      <!-- Eyebrow text matching header style -->
+      <span class="inline-flex items-center gap-2 rounded-full border border-[var(--color-border)] bg-[var(--color-surface)]/80 backdrop-blur-sm px-4 py-1.5 text-[10px] font-mono uppercase tracking-[0.25em] text-[var(--color-primary)] shadow-sm">
         <span class="h-1.5 w-1.5 rounded-full bg-[var(--color-accent)] animate-pulse" aria-hidden="true"></span>
         {eyebrow}
       </span>
       
-      <!-- Editorial Serif Title -->
+      <!-- Cormorant Upright Gold Editorial Title -->
       <h1
-        class="mt-6 font-serif text-5xl font-medium leading-[1.05] tracking-tight text-pretty sm:text-6xl md:text-7xl text-[var(--color-foreground)]"
+        class="mt-8 font-serif text-5xl font-medium leading-[1.05] tracking-wide text-pretty sm:text-6xl md:text-7.5xl text-[var(--color-foreground)] max-w-4xl"
+        style="text-shadow: 0 4px 12px rgba(0,0,0,0.6);"
       >
         {title}
       </h1>
       
       <!-- Grotesque Lede Paragraph -->
-      <p class="mt-6 max-w-[52ch] text-base leading-relaxed text-[var(--color-muted)] sm:text-lg text-pretty">
+      <p 
+        class="mt-6 max-w-[56ch] text-base sm:text-lg leading-relaxed text-[var(--color-muted)] text-pretty"
+        style="text-shadow: 0 2px 4px rgba(0,0,0,0.5);"
+      >
         {subtitle}
       </p>
       
-      <!-- CTA Action Pill & Ghost -->
-      <div class="mt-10 flex flex-wrap items-center gap-4">
-        <Button href="/artikel" variant="primary" size="lg" hasArrow>
-          Baca Artikel
-        </Button>
-        <Button href="/tentang" variant="secondary" size="lg">
-          Tentang Kami
+      <!-- Centered Premium Accent CTA button matching target layout -->
+      <div class="mt-10">
+        <Button 
+          href="/artikel" 
+          variant="accent" 
+          size="lg" 
+          class="font-semibold uppercase tracking-[0.1em] px-8 text-xs h-12 shadow-[0_8px_24px_rgba(26,167,155,0.25)] border border-[var(--color-accent)]/20"
+          hasArrow
+        >
+          Bergabung Komunitas
         </Button>
       </div>
     </div>

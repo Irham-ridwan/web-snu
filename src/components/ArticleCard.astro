@@ -14,6 +14,12 @@ const { entry, body = "", featured = false } = Astro.props
 const { title, description, author, publishDate, tags, seri, cover, draft } = entry.data
 const minutes = readingTime(body || description)
 const href = `/artikel/${entry.id}`
+
+const fallbackCovers = [
+  "/cover_temple.jpg",
+  "/cover_meditation.jpg",
+]
+const finalCover = cover || fallbackCovers[entry.id.charCodeAt(0) % fallbackCovers.length]
 ---
 
 <article
@@ -23,7 +29,7 @@ const href = `/artikel/${entry.id}`
   ]}
 >
   {
-    cover && (
+    finalCover && (
       <a
         href={href}
         class:list={[
@@ -33,13 +39,22 @@ const href = `/artikel/${entry.id}`
         aria-hidden="true"
         tabindex="-1"
       >
-        <Image
-          src={cover}
-          alt=""
-          widths={[400, 800]}
-          sizes="(min-width: 768px) 50vw, 100vw"
-          class="h-full w-full object-cover transition-transform duration-700 ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:scale-103"
-        />
+        {typeof finalCover === "string" ? (
+          <img
+            src={finalCover}
+            alt=""
+            loading="lazy"
+            class="h-full w-full object-cover transition-transform duration-700 ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:scale-103"
+          />
+        ) : (
+          <Image
+            src={finalCover}
+            alt=""
+            widths={[400, 800]}
+            sizes="(min-width: 768px) 50vw, 100vw"
+            class="h-full w-full object-cover transition-transform duration-700 ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:scale-103"
+          />
+        )}
       </a>
     )
   }
@@ -51,15 +66,27 @@ const href = `/artikel/${entry.id}`
       featured && "md:mt-0 md:ml-3 md:justify-center md:p-8 md:rounded-[1.8rem]",
     ]}
   >
-    <div class="flex flex-wrap items-center gap-2">
+    <div class="flex flex-wrap items-center gap-1.5">
       {seri && <SeriBadge seri={seri} />}
+      {tags && tags.map(tag => {
+         let colorClass = "bg-neutral-800 text-neutral-300";
+         if (tag === "niskala" || tag === "lore" || tag === "history") colorClass = "bg-[#b85a3c]/15 text-[#e68a6c] border border-[#b85a3c]/25";
+         else if (tag === "sekala" || tag === "meditation" || tag === "nature") colorClass = "bg-[#1aa79b]/15 text-[#1aa79b] border border-[#1aa79b]/25";
+         else if (tag === "outbound" || tag === "space-grotesk" || tag === "astronomy") colorClass = "bg-[#385e54]/15 text-[#82b4a5] border border-[#385e54]/25";
+         else if (tag === "english-hours" || tag === "mythology") colorClass = "bg-[#d5c39a]/15 text-[#d5c39a] border border-[#d5c39a]/25";
+         return (
+           <span class={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[9px] font-mono uppercase tracking-[0.1em] ${colorClass}`}>
+             {tag}
+           </span>
+         )
+      })}
       {draft && (
-        <span class="inline-flex items-center rounded-full bg-[var(--color-accent)]/15 px-2.5 py-0.5 text-[9px] font-mono uppercase tracking-[0.15em] text-[var(--color-accent)] border border-[var(--color-accent)]/20">
+        <span class="inline-flex items-center rounded-full bg-[var(--color-accent)]/15 px-2.5 py-0.5 text-[9px] font-mono uppercase tracking-[0.1em] text-[var(--color-accent)] border border-[var(--color-accent)]/20">
           Draf
         </span>
       )}
       {featured && !seri && (
-        <span class="inline-flex items-center rounded-full bg-[var(--color-primary)]/15 px-2.5 py-0.5 text-[9px] font-mono uppercase tracking-[0.15em] text-[var(--color-primary)] border border-[var(--color-primary)]/20">
+        <span class="inline-flex items-center rounded-full bg-[var(--color-primary)]/15 px-2.5 py-0.5 text-[9px] font-mono uppercase tracking-[0.1em] text-[var(--color-primary)] border border-[var(--color-primary)]/20">
           Disematkan
         </span>
       )}
@@ -67,8 +94,8 @@ const href = `/artikel/${entry.id}`
 
     <div class="space-y-2.5">
       <h2 class:list={[
-        "font-serif font-medium leading-snug tracking-tight text-[var(--color-foreground)] transition-colors group-hover:text-[var(--color-primary)]", 
-        featured ? "text-2xl sm:text-3xl" : "text-xl"
+        "font-serif font-medium leading-snug tracking-wide text-[var(--color-foreground)] transition-colors group-hover:text-[var(--color-primary)]", 
+        featured ? "text-2xl sm:text-3.5xl" : "text-xl"
       ]}>
         <a href={href}>
           {title}
@@ -83,19 +110,18 @@ const href = `/artikel/${entry.id}`
       </p>
     </div>
 
-    <div class="mt-auto pt-4 border-t border-[var(--color-border)]/30 flex items-center justify-between">
-      <div class="flex flex-wrap items-center gap-x-2 gap-y-1 text-[10px] font-mono uppercase tracking-[0.15em] text-[var(--color-muted)]">
-        <span class="font-medium text-[var(--color-foreground)]">{author}</span>
-        <span aria-hidden="true" class="text-[var(--color-border)]">&middot;</span>
-        <time datetime={publishDate.toISOString()}>{formatDate(publishDate)}</time>
-        <span aria-hidden="true" class="text-[var(--color-border)]">&middot;</span>
-        <span>{minutes} m baca</span>
+    <div class="mt-auto pt-4 border-t border-[var(--color-border)]/30 flex flex-col gap-3">
+      <div class="flex flex-col text-[10px] font-mono uppercase tracking-[0.12em] text-[var(--color-muted)] gap-1">
+        <div><span class="text-[var(--color-foreground)]/45">Author:</span> {author}</div>
+        <div><span class="text-[var(--color-foreground)]/45">Date:</span> {formatDate(publishDate)}</div>
       </div>
-      
-      <a href={href} class="inline-flex items-center gap-1.5 text-xs font-semibold text-[var(--color-primary)] group/link" aria-label={`Baca selengkapnya tentang ${title}`}>
-        Baca 
-        <span class="inline-block transition-transform duration-300 group-hover/link:translate-x-1">&rarr;</span>
-      </a>
+      <div class="flex items-center justify-between pt-2 border-t border-[var(--color-border)]/10">
+        <span class="text-[9px] font-mono uppercase tracking-[0.15em] text-[var(--color-primary)] font-semibold">Morning Mist</span>
+        <a href={href} class="inline-flex items-center gap-1.5 text-xs font-semibold text-[var(--color-accent)] group/link" aria-label={`Baca selengkapnya tentang ${title}`}>
+          Baca 
+          <span class="inline-block transition-transform duration-300 group-hover/link:translate-x-1">&rarr;</span>
+        </a>
+      </div>
     </div>
   </div>
 </article>

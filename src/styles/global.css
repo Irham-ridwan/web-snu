@@ -8,40 +8,40 @@
 */
 
 @theme {
-  --font-sans: "Inter", "Inter Fallback", ui-sans-serif, system-ui, sans-serif;
-  --font-serif: "Fraunces", "Fraunces Fallback", ui-serif, Georgia, serif;
+  --font-sans: "Space Grotesk", "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Cormorant Upright", "Fraunces", ui-serif, Georgia, serif;
 
   --radius: 0.75rem;
 }
 
 /* ---- DARK (default) — kabut subuh menjelang fajar ---- */
 :root {
-  --background: oklch(0.18 0.012 250);
-  --surface: oklch(0.22 0.014 250);
-  --surface-2: oklch(0.26 0.016 250);
-  --foreground: oklch(0.93 0.008 250);
-  --muted: oklch(0.62 0.014 250);
-  --border: oklch(0.32 0.016 250);
-  --primary: oklch(0.74 0.11 70);
-  --primary-foreground: oklch(0.18 0.012 250);
-  --accent: oklch(0.68 0.09 220);
-  --accent-foreground: oklch(0.97 0.005 250);
-  --ring: oklch(0.74 0.11 70);
+  --background: #080f0d;
+  --surface: #0f1b17;
+  --surface-2: #152822;
+  --foreground: #e3ece8;
+  --muted: #708b83;
+  --border: rgba(32, 178, 170, 0.15);
+  --primary: #d5c39a;
+  --primary-foreground: #080f0d;
+  --accent: #1aa79b;
+  --accent-foreground: #ffffff;
+  --ring: #1aa79b;
 }
 
 /* ---- LIGHT — kabut pagi terang ---- */
 :root.light {
-  --background: oklch(0.97 0.008 80);
-  --surface: oklch(0.99 0.005 80);
-  --surface-2: oklch(0.95 0.01 80);
-  --foreground: oklch(0.24 0.014 250);
-  --muted: oklch(0.50 0.014 250);
-  --border: oklch(0.88 0.012 80);
-  --primary: oklch(0.62 0.13 60);
-  --primary-foreground: oklch(0.98 0.005 80);
-  --accent: oklch(0.55 0.10 220);
-  --accent-foreground: oklch(0.98 0.005 80);
-  --ring: oklch(0.62 0.13 60);
+  --background: #f4f7f5;
+  --surface: #ffffff;
+  --surface-2: #ebf0ec;
+  --foreground: #142721;
+  --muted: #5c746c;
+  --border: rgba(26, 167, 155, 0.12);
+  --primary: #9b7f43;
+  --primary-foreground: #ffffff;
+  --accent: #128278;
+  --accent-foreground: #ffffff;
+  --ring: #128278;
 }
 
 @theme inline {

@@ -23,6 +23,28 @@ pnpm run dev
 ```
 Buka `http://localhost:4321` di browser Anda.
 
+### Pengembangan via GitHub Codespaces (Tanpa Install Lokal)
+Jika Anda ingin menjalankan dan menguji website menggunakan Codespace Anda (`super-space-guacamole-xg59v7jgq7q2v445`) langsung dari komputer lokal Anda:
+
+#### Opsi A: Lewat Terminal Lokal (GitHub CLI)
+1. **Nyalakan Server Dev di Codespace:**
+   ```bash
+   gh codespace ssh -c super-space-guacamole-xg59v7jgq7q2v445 -- "cd /workspaces/web-snu && pnpm run dev"
+   ```
+2. **Teruskan Port (Port Forwarding) ke Browser Lokal:**
+   Buka jendela terminal baru di komputer lokal Anda, lalu jalankan:
+   ```bash
+   gh codespace ports forward 4321:4321 -c super-space-guacamole-xg59v7jgq7q2v445
+   ```
+3. **Akses di Browser Anda:**
+   * Website: `http://localhost:4321`
+   * Keystatic CMS: `http://localhost:4321/keystatic`
+
+#### Opsi B: Menggunakan Aplikasi VS Code Lokal
+1. Instal ekstensi **GitHub Codespaces** di aplikasi VS Code lokal Anda.
+2. Tekan `Ctrl + Shift + P` (atau `Cmd + Shift + P` di Mac), pilih **Codespaces: Connect to Codespace...**, lalu pilih `super-space-guacamole-xg59v7jgq7q2v445`.
+3. Buka terminal terintegrasi di VS Code tersebut, lalu jalankan `pnpm run dev`. VS Code akan melakukan port forwarding secara otomatis.
+
 ### Uji Coba Build Produksi (Production Build)
 Untuk melakukan kompilasi file statis lokal sebelum dipublikasikan:
 ```bash

@@ -129,6 +129,67 @@ const upcomingEvents = allEvents
       }
     </section>
 
+    <!-- Quora Space Highlights Section -->
+    <section class="mt-16 pt-8 border-t border-[var(--color-border)]/30" aria-labelledby="quora-heading">
+      <div class="mb-6 flex items-baseline justify-between border-b border-[var(--color-border)]/30 pb-2">
+        <h2 id="quora-heading" class="font-serif text-2xl font-semibold flex items-center gap-2 text-[var(--color-foreground)]">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="text-[var(--color-accent)]">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+          </svg>
+          Sorotan Quora Space
+        </h2>
+        <a 
+          href="https://sekalaniskalauniverse.quora.com/" 
+          target="_blank" 
+          rel="noopener noreferrer" 
+          class="text-xs font-mono uppercase tracking-[0.1em] text-[var(--color-primary)] hover:underline"
+        >
+          Kunjungi Space &rarr;
+        </a>
+      </div>
+
+      <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <!-- Post 1 -->
+        <div class="p-5 rounded-2xl border border-[var(--color-border)]/40 bg-[var(--color-surface)] shadow-sm hover:border-[var(--color-primary)]/30 transition-all flex flex-col justify-between group">
+          <div>
+            <span class="text-[9px] font-mono uppercase tracking-[0.1em] text-[var(--color-muted)]">Diskusi Terpopuler</span>
+            <h3 class="font-serif text-base font-semibold mt-2 text-[var(--color-foreground)] group-hover:text-[var(--color-primary)] transition-colors">Spiritualitas & Kebahagiaan</h3>
+            <p class="text-xs text-[var(--color-muted)] mt-2 leading-relaxed line-clamp-3">Refleksi mendalam tentang makna spiritual awakening: \"Spiritual itu apa sih? Beneran bisa bikin hidup lebih bahagia atau cuma mitos saja?\"</p>
+          </div>
+          <div class="mt-4 pt-3 border-t border-[var(--color-border)]/20 flex items-center justify-between text-[10px] font-mono text-[var(--color-muted)]">
+            <span>Oleh: Lovelie Light</span>
+            <a href="https://sekalaniskalauniverse.quora.com/" target="_blank" rel="noopener noreferrer" class="text-[var(--color-accent)] hover:underline font-semibold">Baca &rarr;</a>
+          </div>
+        </div>
+
+        <!-- Post 2 -->
+        <div class="p-5 rounded-2xl border border-[var(--color-border)]/40 bg-[var(--color-surface)] shadow-sm hover:border-[var(--color-primary)]/30 transition-all flex flex-col justify-between group">
+          <div>
+            <span class="text-[9px] font-mono uppercase tracking-[0.1em] text-[var(--color-muted)]">Mitos & Realita</span>
+            <h3 class="font-serif text-base font-semibold mt-2 text-[var(--color-foreground)] group-hover:text-[var(--color-primary)] transition-colors">Fenomena Rumah Tusuk Sate</h3>
+            <p class="text-xs text-[var(--color-muted)] mt-2 leading-relaxed line-clamp-3">Eksplorasi dari sudut pandang metafisika dan Feng Shui tentang rumah tusuk sate, aliran energi sekitar, serta bagaimana menyikapinya dengan bijak.</p>
+          </div>
+          <div class="mt-4 pt-3 border-t border-[var(--color-border)]/20 flex items-center justify-between text-[10px] font-mono text-[var(--color-muted)]">
+            <span>Oleh: Komunitas SNU</span>
+            <a href="https://sekalaniskalauniverse.quora.com/" target="_blank" rel="noopener noreferrer" class="text-[var(--color-accent)] hover:underline font-semibold">Baca &rarr;</a>
+          </div>
+        </div>
+
+        <!-- Post 3 -->
+        <div class="p-5 rounded-2xl border border-[var(--color-border)]/40 bg-[var(--color-surface)] shadow-sm hover:border-[var(--color-primary)]/30 transition-all flex flex-col justify-between group">
+          <div>
+            <span class="text-[9px] font-mono uppercase tracking-[0.1em] text-[var(--color-muted)]">Energi & Kesadaran</span>
+            <h3 class="font-serif text-base font-semibold mt-2 text-[var(--color-foreground)] group-hover:text-[var(--color-primary)] transition-colors">Perisai Energi & Makhluk Gaib</h3>
+            <p class="text-xs text-[var(--color-muted)] mt-2 leading-relaxed line-clamp-3">Apakah makhluk halus dapat mencelakakan kita secara fisik? Cara meningkatkan vibrasi kesadaran (mindfulness) sebagai pelindung alami.</p>
+          </div>
+          <div class="mt-4 pt-3 border-t border-[var(--color-border)]/20 flex items-center justify-between text-[10px] font-mono text-[var(--color-muted)]">
+            <span>Oleh: King Of Alit</span>
+            <a href="https://sekalaniskalauniverse.quora.com/" target="_blank" rel="noopener noreferrer" class="text-[var(--color-accent)] hover:underline font-semibold">Baca &rarr;</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- Discord Community Call-To-Action Banner -->
     <section class="mt-16 pt-8 border-t border-[var(--color-border)]/30" aria-labelledby="discord-heading">
       <DiscordBanner />

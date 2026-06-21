@@ -1,0 +1,3 @@
+## 2024-06-20 - Unnecessary Body Payload in Article Cards
+**Learning:** The Astro template was passing the entire article `body` (or building a `bodies` map of all articles) just to calculate `readingTime` inside `ArticleCard.astro`. However, this component renders in grids where dozens of articles might be loaded, leading to excessive memory usage and slower page builds/renders just to compute reading time for a card that doesn't even display the reading time!
+**Action:** Remove `body` prop from generic list/card components and pre-calculate reading time at build/content-layer if needed, or don't pass full body content to components that only need metadata.

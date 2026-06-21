@@ -24,7 +24,6 @@ const { tag } = Astro.params
 const { entries } = Astro.props
 const label = tagLabel(tag!)
 const description = tagDescription(tag!)
-const bodies = Object.fromEntries(entries.map((a) => [a.id, a.body ?? ""]))
 ---
 
 <BaseLayout title={`#${label}`} description={description ?? `Artikel dengan tag ${label}.`}>
@@ -42,7 +41,7 @@ const bodies = Object.fromEntries(entries.map((a) => [a.id, a.body ?? ""]))
       entries.length > 0 ? (
         <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {entries.map((entry) => (
-            <ArticleCard entry={entry} body={bodies[entry.id]} />
+            <ArticleCard entry={entry} />
           ))}
         </div>
       ) : (

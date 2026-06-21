@@ -19,13 +19,11 @@ const { page } = Astro.props
 const all = sortArtikel(await getCollection("artikel"))
 const tags = collectTags(all)
 const seri = collectSeri(all)
-const bodies = Object.fromEntries(all.map((a) => [a.id, a.body ?? ""]))
 ---
 
 <BaseLayout title={`Artikel — Halaman ${page.currentPage}`} description="Semua tulisan dari komunitas Sekala Niskala.">
   <ArticleFeed
     entries={page.data}
-    bodies={bodies}
     tags={tags}
     seri={seri}
     currentPage={page.currentPage}

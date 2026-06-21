@@ -8,7 +8,6 @@ const PAGE_SIZE = 9
 const all = sortArtikel(await getCollection("artikel"))
 const tags = collectTags(all)
 const seri = collectSeri(all)
-const bodies = Object.fromEntries(all.map((a) => [a.id, a.body ?? ""]))
 
 const lastPage = Math.max(1, Math.ceil(all.length / PAGE_SIZE))
 const entries = all.slice(0, PAGE_SIZE)
@@ -17,7 +16,6 @@ const entries = all.slice(0, PAGE_SIZE)
 <BaseLayout title="Artikel" description="Semua tulisan dari komunitas Sekala Niskala.">
   <ArticleFeed
     entries={entries}
-    bodies={bodies}
     tags={tags}
     seri={seri}
     currentPage={1}

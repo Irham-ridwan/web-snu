@@ -1,21 +1,20 @@
 ---
 import { Image } from "astro:assets"
 import type { CollectionEntry } from "astro:content"
-import { formatDate, readingTime } from "@/lib/utils"
+import { formatDate } from "@/lib/utils"
 import SeriBadge from "@/components/SeriBadge.astro"
 import coverTemple from "@/assets/cover_temple.jpg"
 import coverMeditation from "@/assets/cover_meditation.jpg"
 
 interface Props {
   entry: CollectionEntry<"artikel">
-  body?: string
   featured?: boolean
   loading?: "lazy" | "eager"
 }
 
-const { entry, body = "", featured = false, loading = "lazy" } = Astro.props
+const { entry, featured = false, loading = "lazy" } = Astro.props
 const { title, description, author, publishDate, tags, seri, cover, draft } = entry.data
-const minutes = readingTime(body || description)
+
 const href = `/artikel/${entry.id}`
 
 const fallbackCovers = [

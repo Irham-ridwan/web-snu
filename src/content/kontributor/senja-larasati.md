@@ -3,7 +3,7 @@ name: "Senja Larasati"
 slug: "senja-larasati"
 role: "Penulis Niskala & Kontemplasi"
 bio: "Peminat sastra dan keheningan. Menulis catatan-catatan kontemplatif tentang seni menunggu dan berdamai dengan ketidakpastian."
-avatar: "/placeholder-user.jpg"
+avatar: "../../../public/placeholder-user.jpg"
 order: 2
 socials:
   - label: "Instagram"

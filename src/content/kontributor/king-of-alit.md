@@ -3,7 +3,7 @@ name: "King Of Alit"
 slug: "king-of-alit"
 role: "Host Arktalk & Pengamat Sains"
 bio: "Pecinta fisika teoritis dan astronomi. Selalu mencari penjelasan ilmiah (sekala) di balik fenomena spiritual yang rumit."
-avatar: "/placeholder-user.jpg"
+avatar: "../../../public/placeholder-user.jpg"
 order: 1
 socials:
   - label: "Instagram"

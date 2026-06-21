@@ -3,7 +3,7 @@ name: "Nyoman Dharma"
 slug: "nyoman-dharma"
 role: "Instruktur Meditasi & Yoga"
 bio: "Praktisi meditasi kesadaran penuh (mindfulness). Mengajarkan pentingnya berlabuh pada tubuh jasmani (sekala) untuk melatih jiwa (niskala)."
-avatar: "/placeholder-user.jpg"
+avatar: "../../../public/placeholder-user.jpg"
 order: 8
 socials:
   - label: "Instagram"

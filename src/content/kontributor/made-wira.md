@@ -3,7 +3,7 @@ name: "Made Wira"
 slug: "made-wira"
 role: "Pemerhati Budaya & Filosofi"
 bio: "Penerjemah teks kuno dan pemerhati budaya Bali. Tertarik pada penyelarasan konsep makrokosmos dan mikrokosmos."
-avatar: "/placeholder-user.jpg"
+avatar: "../../../public/placeholder-user.jpg"
 order: 4
 socials:
   - label: "Instagram"

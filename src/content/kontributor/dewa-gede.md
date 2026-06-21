@@ -3,7 +3,7 @@ name: "Dewa Gede"
 slug: "dewa-gede"
 role: "Petualang & Kontributor Outbound"
 bio: "Pemandu trekking dan petualang alam bebas. Berbagi pengalaman dari puncak gunung dan lembah sunyi di rubrik Outbound."
-avatar: "/placeholder-user.jpg"
+avatar: "../../../public/placeholder-user.jpg"
 order: 3
 socials:
   - label: "Instagram"

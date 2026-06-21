@@ -3,7 +3,7 @@ name: "Saraswati"
 slug: "saraswati"
 role: "Penulis Sains Populer"
 bio: "Fisikawan yang gemar menulis esai astronomi populer. Berupaya mendekatkan rumitnya mekanika kuantum ke bahasa sehari-hari."
-avatar: "/placeholder-user.jpg"
+avatar: "../../../public/placeholder-user.jpg"
 order: 5
 socials:
   - label: "Instagram"

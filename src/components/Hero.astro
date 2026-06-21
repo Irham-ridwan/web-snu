@@ -57,8 +57,8 @@ const {
         {subtitle}
       </p>
       
-      <!-- Centered Premium Accent CTA button matching target layout -->
-      <div class="mt-10">
+      <!-- Centered Premium Accent CTA buttons matching target layout -->
+      <div class="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
         <Button 
           href="/artikel" 
           variant="accent" 
@@ -66,7 +66,17 @@ const {
           class="font-semibold uppercase tracking-[0.1em] px-8 text-xs h-12 shadow-[0_8px_24px_rgba(26,167,155,0.25)] border border-[var(--color-accent)]/20"
           hasArrow
         >
-          Bergabung Komunitas
+          Mulai Membaca
+        </Button>
+        <Button 
+          href="https://sekalaniskalauniverse.quora.com/" 
+          target="_blank"
+          rel="noopener noreferrer"
+          variant="primary" 
+          size="lg" 
+          class="font-semibold uppercase tracking-[0.1em] px-8 text-xs h-12 border border-[var(--color-border)] bg-[var(--color-surface)] hover:bg-[var(--color-surface-2)] text-[var(--color-foreground)]"
+        >
+          Quora Space
         </Button>
       </div>
     </div>

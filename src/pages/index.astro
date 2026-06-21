@@ -7,7 +7,7 @@ import EmptyState from "@/components/EmptyState.astro"
 import TagBadge from "@/components/TagBadge.astro"
 import Button from "@/components/Button.astro"
 import EventCard from "@/components/EventCard.astro"
-import DiscordBanner from "@/components/DiscordBanner.astro"
+import CommunityBanner from "@/components/CommunityBanner.astro"
 import { collectTags, sortArtikel } from "@/lib/utils"
 
 const all = sortArtikel(await getCollection("artikel"))
@@ -190,9 +190,9 @@ const upcomingEvents = allEvents
       </div>
     </section>
 
-    <!-- Discord Community Call-To-Action Banner -->
-    <section class="mt-16 pt-8 border-t border-[var(--color-border)]/30" aria-labelledby="discord-heading">
-      <DiscordBanner />
+    <!-- Community Call-To-Action Banner -->
+    <section class="mt-16 pt-8 border-t border-[var(--color-border)]/30" aria-labelledby="community-heading">
+      <CommunityBanner />
     </section>
   </div>
 </BaseLayout>

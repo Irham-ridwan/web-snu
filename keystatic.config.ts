@@ -44,7 +44,7 @@ export default config({
         featured: fields.checkbox({ label: "Disematkan (Featured)", defaultValue: false }),
         draft: fields.checkbox({ label: "Draf", defaultValue: false }),
         sourceUrl: fields.url({ label: "Source URL (Quora/Lainnya)" }),
-        content: fields.document({
+        content: fields.mdx({
           label: "Konten",
           formatting: {
             inlineMarks: {
@@ -99,8 +99,9 @@ export default config({
           publicPath: "/images/events/",
         }),
         draft: fields.checkbox({ label: "Draf", defaultValue: false }),
-        content: fields.document({
+        content: fields.markdoc({
           label: "Detail Event",
+          extension: "md",
           formatting: {
             inlineMarks: {
               bold: true,
@@ -162,8 +163,9 @@ export default config({
             itemLabel: (props) => `${props.fields.label.value || "Platform"}: ${props.fields.url.value || ""}`,
           }
         ),
-        content: fields.document({
+        content: fields.markdoc({
           label: "Informasi Tambahan (Opsional)",
+          extension: "md",
           formatting: true,
           dividers: true,
           links: true,

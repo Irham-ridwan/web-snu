@@ -6,6 +6,7 @@ import Breadcrumb from "@/components/Breadcrumb.astro"
 import EventStatus from "@/components/EventStatus.astro"
 import EventCountdown from "@/components/EventCountdown.astro"
 import { formatDate } from "@/lib/utils"
+import coverTemple from "@/assets/cover_temple.jpg"
 
 interface Props {
   entry: CollectionEntry<"events">
@@ -29,7 +30,7 @@ const formatTime = (d: Date) => {
 }
 const timeRange = `${formatTime(startDate)} WITA${endDate ? ` - ${formatTime(endDate)} WITA` : ""}`
 
-const finalCover = cover || "/cover_temple.jpg"
+const finalCover = cover || coverTemple
 ---
 
 <BaseLayout title={title} description={description} image={cover ? undefined : "/og-default.png"}>
@@ -53,21 +54,13 @@ const finalCover = cover || "/cover_temple.jpg"
     <!-- Main Visual / Cover Image -->
     {
       finalCover && (
-        typeof finalCover === "string" ? (
-          <img
-            src={finalCover}
-            alt=""
-            class="my-8 aspect-[21/9] w-full rounded-[var(--radius-lg)] object-cover border border-[var(--color-border)]/20 shadow-[0_8px_24px_rgba(0,0,0,0.5)]"
-          />
-        ) : (
-          <Image
-            src={finalCover}
-            alt={`Visual event ${title}`}
-            widths={[480, 768, 1200]}
-            sizes="(min-width: 768px) 768px, 100vw"
-            class="my-8 aspect-[21/9] w-full rounded-[var(--radius-lg)] object-cover border border-[var(--color-border)]/20 shadow-[0_8px_24px_rgba(0,0,0,0.5)]"
-          />
-        )
+        <Image
+          src={finalCover}
+          alt={`Visual event ${title}`}
+          widths={[480, 768, 1200]}
+          sizes="(min-width: 768px) 768px, 100vw"
+          class="my-8 aspect-[21/9] w-full rounded-[var(--radius-lg)] object-cover border border-[var(--color-border)]/20 shadow-[0_8px_24px_rgba(0,0,0,0.5)]"
+        />
       )
     }
 

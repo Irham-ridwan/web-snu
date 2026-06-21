@@ -2,7 +2,11 @@ import { config, collection, fields } from "@keystatic/core"
 
 export default config({
   storage: {
-    kind: "local",
+    kind: process.env.NODE_ENV === "production" ? "github" : "local",
+    repo: {
+      owner: "PaKu211",
+      name: "web-snu",
+    },
   },
   collections: {
     artikel: collection({
@@ -16,6 +20,12 @@ export default config({
         description: fields.text({ label: "Deskripsi", validation: { isRequired: true } }),
         author: fields.text({ label: "Penulis", validation: { isRequired: true } }),
         publishDate: fields.date({ label: "Tanggal Terbit", validation: { isRequired: true } }),
+        updatedDate: fields.date({ label: "Tanggal Diperbarui (Opsional)" }),
+        cover: fields.image({
+          label: "Gambar Sampul (Cover)",
+          directory: "public/images/artikel",
+          publicPath: "/images/artikel/",
+        }),
         tags: fields.array(fields.text({ label: "Tag" }), {
           label: "Tags",
           itemLabel: (props) => props.value || "Tag baru",
@@ -24,6 +34,7 @@ export default config({
           label: "Seri",
           options: [
             { label: "Tidak Ada", value: "" },
+            { label: "WPM [SAGA]", value: "wpm-saga" },
             { label: "Malam Mingguan (malming)", value: "malming" },
             { label: "Seri Outbound (outbound)", value: "outbound" },
             { label: "Arktalk (arktalk)", value: "arktalk" },
@@ -38,9 +49,10 @@ export default config({
           formatting: true,
           dividers: true,
           links: true,
+          tables: true,
           images: {
-            directory: "src/content/artikel/images",
-            publicPath: "./images/",
+            directory: "public/images/artikel",
+            publicPath: "/images/artikel/",
           },
         }),
       },
@@ -57,15 +69,21 @@ export default config({
         startDate: fields.date({ label: "Tanggal Mulai", validation: { isRequired: true } }),
         endDate: fields.date({ label: "Tanggal Selesai" }),
         location: fields.text({ label: "Lokasi", defaultValue: "Online" }),
+        cover: fields.image({
+          label: "Gambar Sampul (Cover)",
+          directory: "public/images/events",
+          publicPath: "/images/events/",
+        }),
         draft: fields.checkbox({ label: "Draf", defaultValue: false }),
         content: fields.document({
           label: "Detail Event",
           formatting: true,
           dividers: true,
           links: true,
+          tables: true,
           images: {
-            directory: "src/content/events/images",
-            publicPath: "./images/",
+            directory: "public/images/events",
+            publicPath: "/images/events/",
           },
         }),
       },

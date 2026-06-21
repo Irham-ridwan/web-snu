@@ -21,47 +21,74 @@ const { entries, bodies, tags, seri, currentPage, lastPage, prevUrl, nextUrl } =
 <div class="mx-auto max-w-5xl px-4 py-10 sm:px-6">
   <Breadcrumb items={[{ label: "Artikel" }]} />
 
-  <header class="mb-8">
-    <h1 class="font-serif text-3xl font-semibold sm:text-4xl">Artikel</h1>
-    <p class="mt-2 text-[var(--color-muted)]">
-      Semua tulisan komunitas — refleksi, perjalanan, dan ruang di antaranya.
-    </p>
+  <header class="mb-8 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+    <div>
+      <h1 class="font-serif text-3xl font-semibold sm:text-4xl text-[var(--color-foreground)]">Artikel</h1>
+      <p class="mt-2 text-sm text-[var(--color-muted)] max-w-xl">
+        Semua tulisan komunitas — refleksi, perjalanan batin, dan ruang di antara yang tampak dan tak tampak.
+      </p>
+    </div>
+
+    {
+      (tags.length > 0 || seri.length > 0) && (
+        <button
+          id="filter-toggle"
+          class="lg:hidden inline-flex items-center justify-center gap-2 rounded-full border border-[var(--color-border)] bg-[var(--color-surface)] px-4 py-2 text-xs font-mono uppercase tracking-wider text-[var(--color-foreground)] transition-colors hover:bg-[var(--color-surface-2)] active:scale-98"
+          aria-expanded="false"
+        >
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-[var(--color-primary)]">
+            <line x1="4" y1="21" x2="4" y2="14"></line>
+            <line x1="4" y1="10" x2="4" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="12"></line>
+            <line x1="12" y1="8" x2="12" y2="3"></line>
+            <line x1="20" y1="21" x2="20" y2="16"></line>
+            <line x1="20" y1="12" x2="20" y2="3"></line>
+            <line x1="1" y1="14" x2="7" y2="14"></line>
+            <line x1="9" y1="8" x2="15" y2="8"></line>
+            <line x1="17" y1="16" x2="23" y2="16"></line>
+          </svg>
+          Filter & Kategori
+        </button>
+      )
+    }
   </header>
 
+  <!-- Mobile Collapsible Filter Panel -->
   {
     (tags.length > 0 || seri.length > 0) && (
-      <div class="p-1 rounded-[1.5rem] border border-[var(--color-border)] bg-[var(--color-surface)] shadow-sm mb-10">
-        <div class="flex flex-col gap-4 p-4 rounded-[1.15rem] bg-[var(--color-surface-2)]/30 border border-[var(--color-border)]/40">
-          {tags.length > 0 && (
-            <div class="flex flex-wrap items-center gap-2">
-              <span class="text-[9px] font-mono uppercase tracking-[0.2em] text-[var(--color-muted)] mr-2">
-                Tag
-              </span>
-              {tags.map(({ tag, count }) => (
-                <a
-                  href={`/tag/${tag}`}
-                  class="inline-flex items-center gap-1.5 rounded-full border border-[var(--color-border)] bg-[var(--color-surface-2)]/60 px-3 py-1.5 text-[10px] font-mono uppercase tracking-[0.1em] text-[var(--color-muted)] transition-colors hover:text-[var(--color-foreground)] hover:border-[var(--color-primary)]/40"
-                >
-                  #{tag}
-                  <span class="text-[9px] font-sans font-semibold bg-[var(--color-surface)] border border-[var(--color-border)] px-1.5 py-0.5 rounded-full text-[var(--color-muted)] leading-none">{count}</span>
-                </a>
-              ))}
+      <div id="mobile-filter-panel" class="hidden lg:hidden mb-8 p-1 rounded-[1.75rem] border border-[var(--color-border)] bg-[var(--color-surface)] shadow-md transition-all">
+        <div class="p-5 rounded-[1.375rem] bg-[var(--color-surface-2)]/30 border border-[var(--color-border)]/40 space-y-6">
+          {seri.length > 0 && (
+            <div class="space-y-3">
+              <h3 class="text-[10px] font-mono uppercase tracking-[0.2em] text-[var(--color-primary)] font-semibold border-b border-[var(--color-border)]/20 pb-1.5">Seri Pilihan</h3>
+              <div class="flex flex-wrap gap-2">
+                {seri.map(({ seri: s, count }) => (
+                  <a
+                    href={`/seri/${s}`}
+                    class="inline-flex items-center gap-1.5 rounded-full border border-[var(--color-primary)]/20 bg-[var(--color-primary)]/10 px-3.5 py-1.5 text-[10px] font-mono uppercase tracking-[0.1em] text-[var(--color-primary)] transition-colors hover:bg-[var(--color-primary)]/25"
+                  >
+                    {s}
+                    <span class="text-[9px] font-sans font-semibold bg-[var(--color-surface)] border border-[var(--color-primary)]/20 px-1.5 py-0.5 rounded-full text-[var(--color-primary)] leading-none">{count}</span>
+                  </a>
+                ))}
+              </div>
             </div>
           )}
-          {seri.length > 0 && (
-            <div class="flex flex-wrap items-center gap-2">
-              <span class="text-[9px] font-mono uppercase tracking-[0.2em] text-[var(--color-muted)] mr-2">
-                Seri
-              </span>
-              {seri.map(({ seri: s, count }) => (
-                <a
-                  href={`/seri/${s}`}
-                  class="inline-flex items-center gap-1.5 rounded-full border border-[var(--color-primary)]/20 bg-[var(--color-primary)]/10 px-3 py-1.5 text-[10px] font-mono uppercase tracking-[0.1em] text-[var(--color-primary)] transition-colors hover:bg-[var(--color-primary)]/20"
-                >
-                  {s}
-                  <span class="text-[9px] font-sans font-semibold bg-[var(--color-surface)] border border-[var(--color-primary)]/20 px-1.5 py-0.5 rounded-full text-[var(--color-primary)] leading-none">{count}</span>
-                </a>
-              ))}
+
+          {tags.length > 0 && (
+            <div class="space-y-3">
+              <h3 class="text-[10px] font-mono uppercase tracking-[0.2em] text-[var(--color-primary)] font-semibold border-b border-[var(--color-border)]/20 pb-1.5">Jelajah Tema</h3>
+              <div class="flex flex-wrap gap-2">
+                {tags.map(({ tag, count }) => (
+                  <a
+                    href={`/tag/${tag}`}
+                    class="inline-flex items-center gap-1.5 rounded-full border border-[var(--color-border)] bg-[var(--color-surface-2)]/60 px-3.5 py-1.5 text-[10px] font-mono uppercase tracking-[0.1em] text-[var(--color-muted)] transition-colors hover:text-[var(--color-foreground)] hover:border-[var(--color-primary)]/40"
+                  >
+                    #{tag}
+                    <span class="text-[9px] font-sans font-semibold bg-[var(--color-surface)] border border-[var(--color-border)] px-1.5 py-0.5 rounded-full text-[var(--color-muted)] leading-none">{count}</span>
+                  </a>
+                ))}
+              </div>
             </div>
           )}
         </div>
@@ -69,23 +96,96 @@ const { entries, bodies, tags, seri, currentPage, lastPage, prevUrl, nextUrl } =
     )
   }
 
-  {
-    entries.length > 0 ? (
-      <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {entries.map((entry) => (
-          <ArticleCard entry={entry} body={bodies[entry.id]} />
-        ))}
-      </div>
-    ) : (
-      <EmptyState title="Belum ada tulisan" description="Artikel akan muncul di sini setelah dipublikasikan." />
-    )
-  }
+  <!-- Layout Grid: 2 columns on lg screens -->
+  <div class="grid grid-cols-1 lg:grid-cols-[1fr_260px] gap-10 items-start">
+    <!-- Article List Column -->
+    <div class="space-y-10">
+      {
+        entries.length > 0 ? (
+          <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+            {entries.map((entry) => (
+              <ArticleCard entry={entry} body={bodies[entry.id]} />
+            ))}
+          </div>
+        ) : (
+          <EmptyState title="Belum ada tulisan" description="Artikel akan muncul di sini setelah dipublikasikan." />
+        )
+      }
 
-  <Pagination
-    currentPage={currentPage}
-    lastPage={lastPage}
-    prevUrl={prevUrl}
-    nextUrl={nextUrl}
-    baseUrl="/artikel"
-  />
+      <Pagination
+        currentPage={currentPage}
+        lastPage={lastPage}
+        prevUrl={prevUrl}
+        nextUrl={nextUrl}
+        baseUrl="/artikel"
+      />
+    </div>
+
+    <!-- Sidebar Column (Desktop only) -->
+    {
+      (tags.length > 0 || seri.length > 0) && (
+        <aside class="hidden lg:block space-y-8 sticky top-28">
+          {seri.length > 0 && (
+            <div class="p-1 rounded-[1.75rem] border border-[var(--color-border)] bg-[var(--color-surface)]/50 shadow-sm">
+              <div class="p-5 rounded-[1.375rem] bg-[var(--color-surface-2)]/30 border border-[var(--color-border)]/20 space-y-4">
+                <h3 class="text-[10px] font-mono uppercase tracking-[0.2em] text-[var(--color-primary)] font-semibold border-b border-[var(--color-border)]/20 pb-2">Seri Pilihan</h3>
+                <div class="flex flex-col gap-2">
+                  {seri.map(({ seri: s, count }) => (
+                    <a
+                      href={`/seri/${s}`}
+                      class="flex items-center justify-between rounded-xl border border-[var(--color-primary)]/20 bg-[var(--color-primary)]/5 px-3.5 py-2 text-[11px] font-mono uppercase tracking-[0.05em] text-[var(--color-primary)] transition-all hover:bg-[var(--color-primary)]/10 hover:translate-x-1"
+                    >
+                      <span class="truncate">{s}</span>
+                      <span class="text-[9px] font-sans font-semibold bg-[var(--color-surface)] border border-[var(--color-primary)]/20 px-1.5 py-0.5 rounded-full text-[var(--color-primary)] leading-none">{count}</span>
+                    </a>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {tags.length > 0 && (
+            <div class="p-1 rounded-[1.75rem] border border-[var(--color-border)] bg-[var(--color-surface)]/50 shadow-sm">
+              <div class="p-5 rounded-[1.375rem] bg-[var(--color-surface-2)]/30 border border-[var(--color-border)]/20 space-y-4">
+                <h3 class="text-[10px] font-mono uppercase tracking-[0.2em] text-[var(--color-primary)] font-semibold border-b border-[var(--color-border)]/20 pb-2">Jelajah Tema</h3>
+                <div class="flex flex-wrap gap-2">
+                  {tags.map(({ tag, count }) => (
+                    <a
+                      href={`/tag/${tag}`}
+                      class="inline-flex items-center gap-1.5 rounded-full border border-[var(--color-border)] bg-[var(--color-surface-2)]/60 px-3 py-1 text-[10px] font-mono uppercase tracking-[0.05em] text-[var(--color-muted)] transition-colors hover:text-[var(--color-foreground)] hover:border-[var(--color-primary)]/40"
+                    >
+                      #{tag}
+                      <span class="text-[8px] font-sans font-semibold bg-[var(--color-surface)] border border-[var(--color-border)] px-1.5 py-0.5 rounded-full text-[var(--color-muted)] leading-none">{count}</span>
+                    </a>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+        </aside>
+      )
+    }
+  </div>
 </div>
+
+<script>
+  const setupToggle = () => {
+    const toggleBtn = document.getElementById('filter-toggle');
+    const filterPanel = document.getElementById('mobile-filter-panel');
+    if (toggleBtn && filterPanel) {
+      toggleBtn.addEventListener('click', () => {
+        const isHidden = filterPanel.classList.contains('hidden');
+        if (isHidden) {
+          filterPanel.classList.remove('hidden');
+          toggleBtn.setAttribute('aria-expanded', 'true');
+        } else {
+          filterPanel.classList.add('hidden');
+          toggleBtn.setAttribute('aria-expanded', 'false');
+        }
+      });
+    }
+  };
+
+  document.addEventListener('DOMContentLoaded', setupToggle);
+  document.addEventListener('astro:page-load', setupToggle);
+</script>

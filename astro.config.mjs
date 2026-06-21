@@ -9,6 +9,10 @@ const isProd = process.env.NODE_ENV === "production"
 
 export default defineConfig({
   site: "https://snu.pages.dev",
+  prefetch: {
+    prefetchAll: true,
+    defaultStrategy: "hover",
+  },
   integrations: [
     react(),
     mdx(),

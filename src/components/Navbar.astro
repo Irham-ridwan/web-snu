@@ -1,6 +1,8 @@
 ---
 import { NAV_LINKS, SITE } from "@/config"
 import ThemeToggle from "@/components/ThemeToggle.tsx"
+import { Image } from "astro:assets"
+import logoImg from "@/assets/snlogo.png"
 
 const path = Astro.url.pathname
 function isActive(href: string) {
@@ -19,7 +21,7 @@ function isActive(href: string) {
       <a href="/" class="flex items-center gap-3 group" aria-label={`${SITE.name} — beranda`}>
         <!-- Official mandala logo image -->
         <div class="relative flex items-center justify-center h-9 w-9 rounded-full bg-black border border-[var(--color-primary)]/20 overflow-hidden shadow-[0_2px_8px_rgba(0,0,0,0.4)] transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:scale-105">
-          <img src="/snlogo.png" alt="Logo Sekala Niskala" class="h-full w-full object-cover transition-transform duration-700 ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:rotate-12" />
+          <Image src={logoImg} alt="Logo Sekala Niskala" class="h-full w-full object-cover transition-transform duration-700 ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:rotate-12" width={36} height={36} />
         </div>
         <span class="flex flex-col leading-none">
           <span class="font-serif text-base font-semibold tracking-tight text-[var(--color-foreground)] transition-colors group-hover:text-[var(--color-primary)]">SNU</span>

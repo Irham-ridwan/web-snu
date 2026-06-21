@@ -11,6 +11,8 @@ import TagBadge from "@/components/TagBadge.astro"
 import SeriBadge from "@/components/SeriBadge.astro"
 import { buildToc, readingTime, seriLabel } from "@/lib/utils"
 import type { TocItem } from "@/lib/utils"
+import coverTemple from "@/assets/cover_temple.jpg"
+import coverMeditation from "@/assets/cover_meditation.jpg"
 
 interface Props {
   entry: CollectionEntry<"artikel">
@@ -25,8 +27,8 @@ const minutes = readingTime(rawBody)
 const toc: TocItem[] = buildToc(headings)
 
 const fallbackCovers = [
-  "/cover_temple.jpg",
-  "/cover_meditation.jpg",
+  coverTemple,
+  coverMeditation,
 ]
 const finalCover = cover || fallbackCovers[entry.id.charCodeAt(0) % fallbackCovers.length]
 ---
@@ -69,21 +71,13 @@ const finalCover = cover || fallbackCovers[entry.id.charCodeAt(0) % fallbackCove
 
     {
       finalCover && (
-        typeof finalCover === "string" ? (
-          <img
-            src={finalCover}
-            alt=""
-            class="mb-10 aspect-[21/9] w-full rounded-[var(--radius-lg)] object-cover shadow-[0_8px_24px_rgba(0,0,0,0.5)] border border-[var(--color-border)]/20"
-          />
-        ) : (
-          <Image
-            src={finalCover}
-            alt={`Ilustrasi untuk artikel ${title}`}
-            widths={[480, 768, 1200]}
-            sizes="(min-width: 768px) 768px, 100vw"
-            class="mb-10 aspect-[21/9] w-full rounded-[var(--radius-lg)] object-cover shadow-[0_8px_24px_rgba(0,0,0,0.5)] border border-[var(--color-border)]/20"
-          />
-        )
+        <Image
+          src={finalCover}
+          alt={`Ilustrasi untuk artikel ${title}`}
+          widths={[480, 768, 1200]}
+          sizes="(min-width: 768px) 768px, 100vw"
+          class="mb-10 aspect-[21/9] w-full rounded-[var(--radius-lg)] object-cover shadow-[0_8px_24px_rgba(0,0,0,0.5)] border border-[var(--color-border)]/20"
+        />
       )
     }
 

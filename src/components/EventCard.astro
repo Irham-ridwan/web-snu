@@ -4,6 +4,8 @@ import { Image } from "astro:assets"
 import EventStatus from "@/components/EventStatus.astro"
 import Button from "@/components/Button.astro"
 import { formatDate } from "@/lib/utils"
+import coverTemple from "@/assets/cover_temple.jpg"
+import coverMeditation from "@/assets/cover_meditation.jpg"
 
 interface Props {
   event: CollectionEntry<"events">
@@ -14,8 +16,8 @@ const { event, class: className = "" } = Astro.props
 const { title, description, startDate, location, cover } = event.data
 
 const fallbackCovers = [
-  "/cover_temple.jpg",
-  "/cover_meditation.jpg",
+  coverTemple,
+  coverMeditation,
 ]
 const finalCover = cover || fallbackCovers[event.id.charCodeAt(0) % fallbackCovers.length]
 const href = `/events/${event.id || event.slug}`
@@ -30,22 +32,13 @@ const href = `/events/${event.id || event.slug}`
   <div class="relative aspect-[16/9] w-full bg-[var(--color-surface-2)] overflow-hidden rounded-[1.375rem] border border-[var(--color-border)]/50">
     {
       finalCover && (
-        typeof finalCover === "string" ? (
-          <img
-            src={finalCover}
-            alt=""
-            loading="lazy"
-            class="h-full w-full object-cover transition-transform duration-700 ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:scale-103"
-          />
-        ) : (
-          <Image
-            src={finalCover}
-            alt={`Ilustrasi untuk event ${title}`}
-            width={400}
-            height={225}
-            class="h-full w-full object-cover transition-transform duration-700 ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:scale-103"
-          />
-        )
+        <Image
+          src={finalCover}
+          alt={`Ilustrasi untuk event ${title}`}
+          width={400}
+          height={225}
+          class="h-full w-full object-cover transition-transform duration-700 ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:scale-103"
+        />
       )
     }
     <div class="absolute right-3 top-3">

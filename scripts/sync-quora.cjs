@@ -75,14 +75,30 @@ async function downloadImage(url, destPath) {
 async function run() {
   console.log('Memulai browser virtual untuk menyinkronkan Quora Space...');
   
+  const apiKey = process.env.ZYTE_API_KEY;
+  const args = ['--no-sandbox', '--disable-setuid-sandbox'];
+  
+  if (apiKey) {
+    console.log('Menggunakan Zyte Smart Proxy Manager untuk bypass Cloudflare...');
+    args.push('--proxy-server=http://spm.zyte.com:8010');
+  } else {
+    console.log('PENTING: ZYTE_API_KEY tidak terdeteksi. Berjalan dalam mode standar (rentan terblokir Cloudflare di server/Codespace).');
+  }
+
   // Launch Puppeteer browser in headless mode
   const browser = await puppeteer.launch({
     headless: 'new',
-    args: ['--no-sandbox', '--disable-setuid-sandbox']
+    args: args
   });
 
   try {
     const page = await browser.newPage();
+    if (apiKey) {
+      await page.authenticate({
+        username: apiKey,
+        password: ''
+      });
+    }
     
     // Set custom user agent to look like a real browser
     await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36');
@@ -146,6 +162,12 @@ async function run() {
       console.log(`Memproses artikel: ${postUrl}...`);
       
       const newPage = await browser.newPage();
+      if (apiKey) {
+        await newPage.authenticate({
+          username: apiKey,
+          password: ''
+        });
+      }
       await newPage.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36');
       
       try {

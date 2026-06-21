@@ -9,7 +9,7 @@
     "build": "astro build && pagefind --site dist",
     "preview": "astro preview",
     "astro": "astro",
-    "sync-quora": "node scripts/sync-quora.js"
+    "sync-quora": "node scripts/sync-quora.cjs"
   },
   "dependencies": {
     "@astrojs/mdx": "^4.3.6",

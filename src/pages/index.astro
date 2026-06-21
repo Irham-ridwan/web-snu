@@ -6,6 +6,8 @@ import ArticleCard from "@/components/ArticleCard.astro"
 import EmptyState from "@/components/EmptyState.astro"
 import TagBadge from "@/components/TagBadge.astro"
 import Button from "@/components/Button.astro"
+import EventCard from "@/components/EventCard.astro"
+import DiscordBanner from "@/components/DiscordBanner.astro"
 import { collectTags, sortArtikel } from "@/lib/utils"
 
 const all = sortArtikel(await getCollection("artikel"))
@@ -13,6 +15,17 @@ const featured = all.find((a) => a.data.featured) ?? all[0]
 const rest = all.filter((a) => a.id !== featured?.id).slice(0, 6)
 const tags = collectTags(all).slice(0, 8)
 const bodies = Object.fromEntries(all.map((a) => [a.id, a.body ?? ""]))
+
+// Retrieve upcoming events
+const allEvents = await getCollection("events", ({ data }) => import.meta.env.DEV || !data.draft)
+const now = new Date()
+const upcomingEvents = allEvents
+  .filter((e) => {
+    const end = e.data.endDate ?? new Date(e.data.startDate.getTime() + 24 * 60 * 60 * 1000)
+    return end >= now
+  })
+  .sort((a, b) => a.data.startDate.valueOf() - b.data.startDate.valueOf())
+  .slice(0, 2)
 ---
 
 <BaseLayout>
@@ -47,6 +60,26 @@ const bodies = Object.fromEntries(all.map((a) => [a.id, a.body ?? ""]))
                 #{tag}
                 <span class="text-[9px] font-sans font-semibold bg-[var(--color-surface)] border border-[var(--color-border)] px-1.5 py-0.5 rounded-full text-[var(--color-muted)] leading-none">{count}</span>
               </a>
+            ))}
+          </div>
+        </section>
+      )
+    }
+
+    {
+      upcomingEvents.length > 0 && (
+        <section class="mb-14" aria-labelledby="upcoming-events-heading">
+          <div class="mb-5 flex items-baseline justify-between border-b border-[var(--color-border)]/30 pb-2">
+            <h2 id="upcoming-events-heading" class="font-serif text-2xl font-semibold">
+              Kegiatan Mendatang
+            </h2>
+            <Button href="/events" variant="ghost" size="sm" class="text-[var(--color-primary)] hover:text-[var(--color-primary)]/80 text-xs">
+              Lihat semua &rarr;
+            </Button>
+          </div>
+          <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+            {upcomingEvents.map((event) => (
+              <EventCard event={event} />
             ))}
           </div>
         </section>
@@ -95,6 +128,11 @@ const bodies = Object.fromEntries(all.map((a) => [a.id, a.body ?? ""]))
           />
         )
       }
+    </section>
+
+    <!-- Discord Community Call-To-Action Banner -->
+    <section class="mt-16 pt-8 border-t border-[var(--color-border)]/30" aria-labelledby="discord-heading">
+      <DiscordBanner />
     </section>
   </div>
 </BaseLayout>

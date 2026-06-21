@@ -76,9 +76,13 @@ const ogImage = new URL(image, Astro.site ?? SITE.url).toString()
       }
     </script>
   </head>
-  <body class="min-h-screen flex flex-col">
+  <body class="min-h-screen flex flex-col relative overflow-x-hidden">
+    <!-- Drifting Ambient glows for volumetric fog effect globally -->
+    <div class="mesh-glow-1 pointer-events-none fixed top-[-10%] left-[-10%] h-[500px] w-[500px] rounded-full bg-[var(--color-accent)]/5 blur-[120px] -z-10" aria-hidden="true"></div>
+    <div class="mesh-glow-2 pointer-events-none fixed bottom-[-10%] right-[-10%] h-[600px] w-[600px] rounded-full bg-[var(--color-primary)]/4 blur-[130px] -z-10" aria-hidden="true"></div>
+
     <Navbar />
-    <main class="flex-1">
+    <main class="flex-1 relative z-10">
       <slot />
     </main>
     <Footer />

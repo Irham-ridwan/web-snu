@@ -42,6 +42,34 @@ function makeMdxSafe(html) {
     .replace(/<!--[\s\S]*?-->/g, '');
 }
 
+// Simple Markdown to plain text cleaner for description
+function cleanDescriptionMarkdown(md) {
+  if (!md) return '';
+  const text = md
+    .replace(/[#*_\-[\]()!]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+  return text.slice(0, 150) + (text.length > 150 ? '...' : '');
+}
+
+// Helper to download an image using the native Node fetch API
+async function downloadImage(url, destPath) {
+  try {
+    const res = await fetch(url);
+    if (res.ok) {
+      const arrayBuffer = await res.arrayBuffer();
+      const buffer = Buffer.from(arrayBuffer);
+      fs.writeFileSync(destPath, buffer);
+      return true;
+    }
+    console.error(`Gagal mengunduh gambar dari ${url}, HTTP status: ${res.status}`);
+    return false;
+  } catch (err) {
+    console.error(`Gagal mengunduh gambar ${url}: ${err.message}`);
+    return false;
+  }
+}
+
 async function run() {
   console.log('Memulai browser virtual untuk menyinkronkan Quora Space...');
   
@@ -125,29 +153,132 @@ async function run() {
           .trim();
 
         const postData = await newPage.evaluate(() => {
-          // Find post content area
           const contentEl = document.querySelector('.qu-userSelect--text') || 
                             document.querySelector('.q-text.qu-userSelect--text') ||
                             document.querySelector('article') ||
                             document.querySelector('.q-box.qu-userSelect--text');
-          const contentHtml = contentEl ? contentEl.innerHTML : '';
+          
+          if (!contentEl) return null;
 
-          // Extract date from Quora info line
+          function wrapMarkdown(text, wrapper) {
+            const trimmed = text.trim();
+            if (!trimmed) return text;
+            const leading = text.match(/^\s*/)[0];
+            const trailing = text.match(/\s*$/)[0];
+            if (trimmed.startsWith(wrapper) && trimmed.endsWith(wrapper)) {
+              return text;
+            }
+            return `${leading}${wrapper}${trimmed}${wrapper}${trailing}`;
+          }
+
+          function toMarkdown(node) {
+            if (node.nodeType === 3) { // Text node
+              return node.textContent;
+            }
+            if (node.nodeType !== 1) { // Element node
+              return '';
+            }
+
+            const tagName = node.tagName.toLowerCase();
+            
+            if (tagName === 'style' || tagName === 'script') {
+              return '';
+            }
+
+            let childrenMarkdown = '';
+            for (const child of node.childNodes) {
+              childrenMarkdown += toMarkdown(child);
+            }
+
+            switch (tagName) {
+              case 'p':
+                if (!childrenMarkdown.trim()) return '';
+                return '\n\n' + childrenMarkdown.trim() + '\n\n';
+              case 'span':
+                const weight = node.style.fontWeight || '';
+                const style = node.style.fontStyle || '';
+                let text = childrenMarkdown;
+                if (weight === 'bold' || weight === '700') {
+                  text = wrapMarkdown(text, '**');
+                }
+                if (style === 'italic') {
+                  text = wrapMarkdown(text, '*');
+                }
+                return text;
+              case 'b':
+              case 'strong':
+                return wrapMarkdown(childrenMarkdown, '**');
+              case 'i':
+              case 'em':
+                return wrapMarkdown(childrenMarkdown, '*');
+              case 'u':
+                return childrenMarkdown;
+              case 'h1':
+                return '\n\n# ' + childrenMarkdown.trim() + '\n\n';
+              case 'h2':
+                return '\n\n## ' + childrenMarkdown.trim() + '\n\n';
+              case 'h3':
+                return '\n\n### ' + childrenMarkdown.trim() + '\n\n';
+              case 'h4':
+              case 'h5':
+              case 'h6':
+                return '\n\n#### ' + childrenMarkdown.trim() + '\n\n';
+              case 'blockquote':
+                return '\n\n> ' + childrenMarkdown.trim().split('\n').map(line => line.trim()).join('\n> ') + '\n\n';
+              case 'ul':
+                return '\n\n' + childrenMarkdown.trim() + '\n\n';
+              case 'ol':
+                return '\n\n' + childrenMarkdown.trim() + '\n\n';
+              case 'li':
+                return '\n- ' + childrenMarkdown.trim();
+              case 'a':
+                const href = node.getAttribute('href') || '';
+                if (href) {
+                  return ` [${childrenMarkdown.trim() || href}](${href}) `;
+                }
+                return childrenMarkdown;
+              case 'img':
+                const src = node.getAttribute('src') || '';
+                const alt = node.getAttribute('alt') || '';
+                if (src) {
+                  return `\n\n![${alt || 'image'}](${src})\n\n`;
+                }
+                return '';
+              case 'br':
+                return '\n';
+              case 'div':
+                if (node.classList.contains('QTextBlockQuote___StyledAbsolute-sc-21084cfb-0')) {
+                  return '';
+                }
+                return childrenMarkdown;
+              default:
+                return childrenMarkdown;
+            }
+          }
+
+          let markdown = toMarkdown(contentEl);
+          
+          // Post-processing cleanup for spacing
+          markdown = markdown
+            .replace(/\r\n/g, '\n')
+            .replace(/\n{3,}/g, '\n\n')
+            .trim();
+
           const dateEl = document.querySelector('.q-text.qu-color--gray_light');
           const dateStr = dateEl ? dateEl.textContent.trim() : '';
 
-          return { contentHtml, dateStr };
+          return { markdown, dateStr };
         });
 
-        // Fallback title if empty
-        if (!title && postData.contentHtml) {
-          const text = postData.contentHtml.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
-          title = text.slice(0, 50) + (text.length > 50 ? '...' : '');
+        if (!postData || !postData.markdown) {
+          console.log(`[Terlewati] Gagal mengekstrak konten atau markdown kosong.`);
+          continue;
         }
 
-        if (!title || !postData.contentHtml) {
-          console.log(`[Terlewati] Gagal mengekstrak judul atau konten.`);
-          continue;
+        // Fallback title if empty
+        if (!title) {
+          const text = postData.markdown.replace(/[#*_\-[\]()!]/g, ' ').replace(/\s+/g, ' ').trim();
+          title = text.slice(0, 50) + (text.length > 50 ? '...' : '');
         }
 
         const slug = slugify(title);
@@ -220,8 +351,44 @@ async function run() {
           }
         }
 
-        const descriptionText = cleanDescription(postData.contentHtml);
-        const safeHtml = makeMdxSafe(postData.contentHtml);
+        const descriptionText = cleanDescriptionMarkdown(postData.markdown);
+
+        // Download all inline images from markdown
+        const imgRegex = /!\[(.*?)\]\((https?:\/\/[^)]+)\)/g;
+        let match;
+        let finalMarkdown = postData.markdown;
+        let inlineImgIndex = 1;
+
+        // Reset regex state
+        imgRegex.lastIndex = 0;
+
+        while ((match = imgRegex.exec(postData.markdown)) !== null) {
+          const alt = match[1];
+          const fullUrl = match[2];
+
+          // Clean URL from query parameters and hash
+          const cleanUrl = fullUrl.split('?')[0].split('#')[0];
+          let imgExt = 'jpg';
+          const lastSlashIndex = cleanUrl.lastIndexOf('/');
+          const lastPart = cleanUrl.substring(lastSlashIndex + 1);
+          if (lastPart.includes('.')) {
+            const parts = lastPart.split('.');
+            imgExt = parts[parts.length - 1];
+            if (imgExt.toLowerCase() === 'jpeg') imgExt = 'jpg';
+            imgExt = imgExt.split(/[?#]/)[0];
+          }
+
+          const imgName = `content-${slug}-${inlineImgIndex}.${imgExt}`;
+          const destImgPath = path.join(publicImagesDir, imgName);
+          const relativePath = `/images/artikel/${imgName}`;
+
+          console.log(`Mengunduh gambar konten: ${cleanUrl}...`);
+          const success = await downloadImage(cleanUrl, destImgPath);
+          if (success) {
+            finalMarkdown = finalMarkdown.replace(match[0], `![${alt}](${relativePath})`);
+            inlineImgIndex++;
+          }
+        }
 
         const mdxContent = `---
 title: "${title.replace(/"/g, '\\"')}"
@@ -233,7 +400,7 @@ sourceUrl: "${postUrl}"
 ${coverPath ? `cover: "${coverPath}"` : ''}
 ---
 
-${safeHtml}
+${finalMarkdown}
 `;
 
         fs.writeFileSync(filePath, mdxContent, 'utf8');

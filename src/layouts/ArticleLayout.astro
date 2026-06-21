@@ -69,39 +69,80 @@ const finalCover = cover || fallbackCovers[entry.id.charCodeAt(0) % fallbackCove
 
       <ArticleMeta author={author} publishDate={publishDate} minutes={minutes} class="mt-5" />
 
-      <!-- Text Size Adjuster Widget -->
-      <div class="mt-6 flex items-center justify-between border-y border-[var(--color-border)]/20 py-3 text-xs text-[var(--color-muted)]">
-        <div class="flex items-center gap-1.5">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="text-[var(--color-primary)]">
-            <path d="M4 7V4h16v3M9 20h6M12 4v16"/>
-          </svg>
-          <span class="font-serif">Ukuran Teks Bacaan</span>
+      <!-- Text Size and Font Switcher Widget Toolbar -->
+      <div class="mt-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-y border-[var(--color-border)]/20 py-3 text-xs text-[var(--color-muted)]">
+        <!-- Font family switcher -->
+        <div class="flex items-center justify-between gap-3 sm:justify-start">
+          <div class="flex items-center gap-1.5">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="text-[var(--color-primary)]">
+              <polyline points="4 7 4 4 20 4 20 7"></polyline>
+              <line x1="9" y1="20" x2="15" y2="20"></line>
+              <line x1="12" y1="4" x2="12" y2="20"></line>
+            </svg>
+            <span class="font-serif">Gaya Huruf</span>
+          </div>
+          <div class="flex items-center gap-1 bg-[var(--color-surface-2)]/60 rounded-full p-1 border border-[var(--color-border)]/40">
+            <button 
+              type="button"
+              id="font-serif" 
+              class="h-7 px-3 rounded-full flex items-center justify-center text-[10px] uppercase font-serif tracking-wider transition-all cursor-pointer"
+              title="Font Serif (Klasik)"
+            >
+              Serif
+            </button>
+            <button 
+              type="button"
+              id="font-sans" 
+              class="h-7 px-3 rounded-full flex items-center justify-center text-[10px] uppercase font-sans tracking-wider transition-all cursor-pointer"
+              title="Font Sans (Modern)"
+            >
+              Sans
+            </button>
+            <button 
+              type="button"
+              id="font-mono" 
+              class="h-7 px-3 rounded-full flex items-center justify-center text-[10px] uppercase font-mono tracking-wider transition-all cursor-pointer"
+              title="Font Mono (Kode)"
+            >
+              Mono
+            </button>
+          </div>
         </div>
-        <div class="flex items-center gap-1 bg-[var(--color-surface-2)]/60 rounded-full p-1 border border-[var(--color-border)]/40">
-          <button 
-            type="button"
-            id="text-dec" 
-            class="h-7 w-7 rounded-full flex items-center justify-center text-xs font-mono text-[var(--color-muted)] hover:text-[var(--color-foreground)] hover:bg-[var(--color-surface)] transition-all cursor-pointer"
-            title="Perkecil tulisan (A-)"
-          >
-            A-
-          </button>
-          <button 
-            type="button"
-            id="text-normal" 
-            class="h-7 px-3 rounded-full flex items-center justify-center text-[10px] uppercase font-mono tracking-wider font-semibold text-[var(--color-primary)] bg-[var(--color-surface)] border border-[var(--color-border)]/20 transition-all cursor-pointer"
-            title="Ukuran normal"
-          >
-            Normal
-          </button>
-          <button 
-            type="button"
-            id="text-inc" 
-            class="h-7 w-7 rounded-full flex items-center justify-center text-xs font-mono text-[var(--color-muted)] hover:text-[var(--color-foreground)] hover:bg-[var(--color-surface)] transition-all cursor-pointer"
-            title="Perbesar tulisan (A+)"
-          >
-            A+
-          </button>
+
+        <!-- Text size changer -->
+        <div class="flex items-center justify-between gap-3 sm:justify-end">
+          <div class="flex items-center gap-1.5">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="text-[var(--color-primary)]">
+              <path d="M4 7V4h16v3M9 20h6M12 4v16"/>
+            </svg>
+            <span class="font-serif">Ukuran Teks</span>
+          </div>
+          <div class="flex items-center gap-1 bg-[var(--color-surface-2)]/60 rounded-full p-1 border border-[var(--color-border)]/40">
+            <button 
+              type="button"
+              id="text-dec" 
+              class="h-7 w-7 rounded-full flex items-center justify-center text-xs font-mono text-[var(--color-muted)] hover:text-[var(--color-foreground)] hover:bg-[var(--color-surface)] transition-all cursor-pointer"
+              title="Perkecil tulisan (A-)"
+            >
+              A-
+            </button>
+            <button 
+              type="button"
+              id="text-normal" 
+              class="h-7 px-3 rounded-full flex items-center justify-center text-[10px] uppercase font-mono tracking-wider font-semibold text-[var(--color-primary)] bg-[var(--color-surface)] border border-[var(--color-border)]/20 transition-all cursor-pointer"
+              title="Ukuran normal"
+            >
+              Normal
+            </button>
+            <button 
+              type="button"
+              id="text-inc" 
+              class="h-7 w-7 rounded-full flex items-center justify-center text-xs font-mono text-[var(--color-muted)] hover:text-[var(--color-foreground)] hover:bg-[var(--color-surface)] transition-all cursor-pointer"
+              title="Perbesar tulisan (A+)"
+            >
+              A+
+            </button>
+          </div>
         </div>
       </div>
     </header>
@@ -164,57 +205,112 @@ const finalCover = cover || fallbackCovers[entry.id.charCodeAt(0) % fallbackCove
   </div>
 
   <script>
-    function initTextResizer() {
+    function initArticleControls() {
       const prose = document.querySelector('.prose');
       const decBtn = document.getElementById('text-dec');
       const normalBtn = document.getElementById('text-normal');
       const incBtn = document.getElementById('text-inc');
 
-      if (!prose || !decBtn || !normalBtn || !incBtn) return;
+      const fontSerifBtn = document.getElementById('font-serif');
+      const fontSansBtn = document.getElementById('font-sans');
+      const fontMonoBtn = document.getElementById('font-mono');
 
-      const classes = ['prose-sm', 'prose-base', 'prose-lg', 'prose-xl', 'prose-2xl'];
-      // Default size index is 2 ('prose-lg') to keep text comfortable by default
-      let currentIndex = parseInt(localStorage.getItem('preferred-prose-size-index') ?? '2');
+      if (!prose) return;
+
+      // --- TEXT SIZE ---
+      const sizeClasses = ['prose-sm', 'prose-base', 'prose-lg', 'prose-xl', 'prose-2xl'];
+      let currentSizeIndex = parseInt(localStorage.getItem('preferred-prose-size-index') ?? '2');
 
       function updateSize() {
-        classes.forEach(c => prose.classList.remove(c));
-        prose.classList.add(classes[currentIndex]);
+        sizeClasses.forEach(c => prose.classList.remove(c));
+        prose.classList.add(sizeClasses[currentSizeIndex]);
 
-        decBtn.style.opacity = currentIndex === 0 ? '0.4' : '1';
-        decBtn.style.pointerEvents = currentIndex === 0 ? 'none' : 'auto';
-        
-        incBtn.style.opacity = currentIndex === classes.length - 1 ? '0.4' : '1';
-        incBtn.style.pointerEvents = currentIndex === classes.length - 1 ? 'none' : 'auto';
+        if (decBtn && incBtn) {
+          decBtn.style.opacity = currentSizeIndex === 0 ? '0.4' : '1';
+          decBtn.style.pointerEvents = currentSizeIndex === 0 ? 'none' : 'auto';
+          
+          incBtn.style.opacity = currentSizeIndex === sizeClasses.length - 1 ? '0.4' : '1';
+          incBtn.style.pointerEvents = currentSizeIndex === sizeClasses.length - 1 ? 'none' : 'auto';
+        }
 
-        localStorage.setItem('preferred-prose-size-index', String(currentIndex));
+        localStorage.setItem('preferred-prose-size-index', String(currentSizeIndex));
       }
 
-      decBtn.addEventListener('click', () => {
-        if (currentIndex > 0) {
-          currentIndex--;
-          updateSize();
-        }
-      });
+      if (decBtn && normalBtn && incBtn) {
+        decBtn.addEventListener('click', () => {
+          if (currentSizeIndex > 0) {
+            currentSizeIndex--;
+            updateSize();
+          }
+        });
 
-      incBtn.addEventListener('click', () => {
-        if (currentIndex < classes.length - 1) {
-          currentIndex++;
-          updateSize();
-        }
-      });
+        incBtn.addEventListener('click', () => {
+          if (currentSizeIndex < sizeClasses.length - 1) {
+            currentSizeIndex++;
+            updateSize();
+          }
+        });
 
-      normalBtn.addEventListener('click', () => {
-        currentIndex = 2; // prose-lg as normal
-        updateSize();
-      });
+        normalBtn.addEventListener('click', () => {
+          currentSizeIndex = 2; // prose-lg as normal
+          updateSize();
+        });
+      }
 
       updateSize();
+
+      // --- FONT FAMILY ---
+      const fontClasses = ['prose-font-serif', 'prose-font-sans', 'prose-font-mono'];
+      let currentFont = localStorage.getItem('preferred-prose-font') ?? 'serif';
+
+      function updateFont() {
+        fontClasses.forEach(c => prose.classList.remove(c));
+        prose.classList.add(`prose-font-${currentFont}`);
+
+        // Update button active state classes
+        const fontBtns = {
+          serif: fontSerifBtn,
+          sans: fontSansBtn,
+          mono: fontMonoBtn
+        };
+
+        Object.keys(fontBtns).forEach(key => {
+          const btn = fontBtns[key];
+          if (!btn) return;
+          if (key === currentFont) {
+            btn.classList.add('text-[var(--color-primary)]', 'bg-[var(--color-surface)]', 'border', 'border-[var(--color-border)]/20');
+            btn.classList.remove('text-[var(--color-muted)]');
+          } else {
+            btn.classList.remove('text-[var(--color-primary)]', 'bg-[var(--color-surface)]', 'border', 'border-[var(--color-border)]/20');
+            btn.classList.add('text-[var(--color-muted)]');
+          }
+        });
+
+        localStorage.setItem('preferred-prose-font', currentFont);
+      }
+
+      if (fontSerifBtn && fontSansBtn && fontMonoBtn) {
+        fontSerifBtn.addEventListener('click', () => {
+          currentFont = 'serif';
+          updateFont();
+        });
+        fontSansBtn.addEventListener('click', () => {
+          currentFont = 'sans';
+          updateFont();
+        });
+        fontMonoBtn.addEventListener('click', () => {
+          currentFont = 'mono';
+          updateFont();
+        });
+      }
+
+      updateFont();
     }
 
-    // Load initial size
-    initTextResizer();
+    // Load initial controls state
+    initArticleControls();
     
     // Support page transitions
-    document.addEventListener('astro:after-swap', initTextResizer);
+    document.addEventListener('astro:after-swap', initArticleControls);
   </script>
 </BaseLayout>

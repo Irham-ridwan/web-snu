@@ -94,6 +94,52 @@ import QuoraEmbed from "@/components/QuoraEmbed.astro"
 
 ---
 
+## 🔄 Sinkronisasi Otomatis Artikel Quora Space (Quora Sync)
+
+Kami telah menyediakan script otomatisasi menggunakan **Puppeteer** untuk menyinkronkan postingan terbaru dari Quora Space [Sekala Niskala Universe](https://sekalaniskalauniverse.quora.com/) langsung menjadi file Markdown (`.mdx`) lengkap dengan gambar sampul dan gambar konten yang disimpan secara lokal (self-hosted).
+
+### Aturan Penting Sinkronisasi
+> [!IMPORTANT]
+> **JANGAN menjalankan instalasi dependensi browser virtual (Puppeteer) atau script sinkronisasi ini di komputer lokal (Device Fisik Anda).**
+> Jalankan proses sinkronisasi **hanya di dalam lingkungan GitHub Codespace** untuk menghindari error dependensi sistem operasi lokal, konsumsi memori tinggi, dan pemblokiran firewall.
+
+### Cara Menjalankan Sinkronisasi di GitHub Codespace:
+
+1. **Buka Terminal / SSH ke Codespace Anda:**
+   Hubungkan terminal lokal Anda ke Codespace:
+   ```bash
+   gh codespace ssh -c super-space-guacamole-xg59v7jgq7q2v445 -- "cd /workspaces/web-snu"
+   ```
+   *Atau buka secara interaktif lewat VS Code Remote Development.*
+
+2. **Jalankan Instalasi Dependensi (Bila Diperlukan):**
+   ```bash
+   pnpm install
+   ```
+
+3. **Jalankan Script Sinkronisasi:**
+   Jalankan script untuk mendownload 12 artikel terbaru dari Quora Space:
+   ```bash
+   pnpm run sync-quora
+   ```
+   Script akan:
+   * Membuka browser virtual (headless) di Codespace untuk melewati proteksi firewall/Cloudflare Quora.
+   * Mendeteksi tautan postingan terbaru di Quora Space.
+   * Mengekstrak judul, tanggal terbit, cover image, dan teks konten lengkap.
+   * Melakukan konversi DOM HTML ke Markdown murni (supaya tidak bentrok dengan skema Keystatic).
+   * Mengunduh semua gambar dalam artikel ke `/public/images/artikel/` dan menyesuaikan tautannya.
+   * Membuat file `.mdx` baru di folder `src/content/artikel/` dengan tag `["quora-sync"]`.
+
+4. **Verifikasi dan Kirim Perubahan (Commit & Push):**
+   Setelah sinkronisasi selesai, verifikasi file `.mdx` yang baru di `src/content/artikel/`, lalu jalankan git commit untuk mempublikasikannya ke live website:
+   ```bash
+   git add .
+   git commit -m "chore: sync postingan terbaru dari Quora Space"
+   git push origin main
+   ```
+
+---
+
 ## 💬 Konfigurasi Kolom Komentar (Waline)
 
 Kami menggunakan **Waline** untuk sistem komentar karena mendukung login umum, emoji, markdown, dan notifikasi tanpa memerlukan server berbayar.

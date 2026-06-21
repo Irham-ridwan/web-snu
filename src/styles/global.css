@@ -95,7 +95,7 @@
   }
   .prose h2 {
     font-family: var(--font-serif);
-    font-size: 1.6rem;
+    font-size: 1.5em;
     font-weight: 600;
     margin-top: 2.5rem;
     margin-bottom: 1rem;
@@ -103,7 +103,7 @@
   }
   .prose h3 {
     font-family: var(--font-serif);
-    font-size: 1.25rem;
+    font-size: 1.2em;
     font-weight: 600;
     margin-top: 2rem;
     margin-bottom: 0.75rem;
@@ -140,7 +140,7 @@
     font-style: italic;
   }
   .prose img {
-    border-radius: var(--radius-md);
+    border-radius: var(--radius-lg);
     margin: 1.5rem 0;
   }
   .prose code {
@@ -160,6 +160,18 @@
     background: transparent;
     padding: 0;
   }
+
+  /* Prose sizing classes */
+  .prose.prose-sm { font-size: 0.875rem; }
+  .prose.prose-base { font-size: 1rem; }
+  .prose.prose-lg { font-size: 1.125rem; }
+  .prose.prose-xl { font-size: 1.25rem; }
+  .prose.prose-2xl { font-size: 1.5rem; }
+
+  /* Prose font-family classes */
+  .prose.prose-font-serif { font-family: var(--font-serif); }
+  .prose.prose-font-sans { font-family: var(--font-sans); }
+  .prose.prose-font-mono { font-family: var(--font-sans); font-feature-settings: normal; font-variation-settings: normal; font-family: monospace; }
 
   /* Drifting ambient mesh animations */
   @keyframes drift1 {

@@ -12,33 +12,40 @@ interface Props {
 
 const { event, class: className = "" } = Astro.props
 const { title, description, startDate, location, cover } = event.data
+
+const fallbackCovers = [
+  "/cover_temple.jpg",
+  "/cover_meditation.jpg",
+]
+const finalCover = cover || fallbackCovers[event.id.charCodeAt(0) % fallbackCovers.length]
+const href = `/events/${event.id || event.slug}`
 ---
 
 <article
   class:list={[
-    "flex flex-col overflow-hidden rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] shadow-sm transition-all hover:border-[var(--color-primary)]/50 hover:shadow-md",
+    "p-1.5 rounded-[1.75rem] border border-[var(--color-border)] bg-[var(--color-surface)] shadow-[0_12px_24px_-12px_rgba(0,0,0,0.3)] transition-premium hover:shadow-[0_20px_32px_-10px_rgba(0,0,0,0.45)] hover:border-[var(--color-primary)]/30 hover:-translate-y-0.5 group flex flex-col",
     className
   ]}
 >
-  <div class="relative aspect-[16/9] w-full bg-[var(--color-surface-2)] overflow-hidden">
+  <div class="relative aspect-[16/9] w-full bg-[var(--color-surface-2)] overflow-hidden rounded-[1.375rem] border border-[var(--color-border)]/50">
     {
-      cover ? (
-        <Image
-          src={cover}
-          alt={`Ilustrasi untuk event ${title}`}
-          width={400}
-          height={225}
-          class="h-full w-full object-cover transition-transform duration-500 hover:scale-105"
-        />
-      ) : (
-        <div class="flex h-full w-full items-center justify-center text-[var(--color-muted)]">
-          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-            <line x1="16" y1="2" x2="16" y2="6"></line>
-            <line x1="8" y1="2" x2="8" y2="6"></line>
-            <line x1="3" y1="10" x2="21" y2="10"></line>
-          </svg>
-        </div>
+      finalCover && (
+        typeof finalCover === "string" ? (
+          <img
+            src={finalCover}
+            alt=""
+            loading="lazy"
+            class="h-full w-full object-cover transition-transform duration-700 ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:scale-103"
+          />
+        ) : (
+          <Image
+            src={finalCover}
+            alt={`Ilustrasi untuk event ${title}`}
+            width={400}
+            height={225}
+            class="h-full w-full object-cover transition-transform duration-700 ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:scale-103"
+          />
+        )
       )
     }
     <div class="absolute right-3 top-3">
@@ -46,24 +53,24 @@ const { title, description, startDate, location, cover } = event.data
     </div>
   </div>
 
-  <div class="flex flex-1 flex-col p-5">
-    <div class="mb-2 flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-[var(--color-primary)]">
+  <div class="flex flex-1 flex-col p-4 sm:p-5 rounded-[1.375rem] bg-[var(--color-surface-2)]/30 border border-[var(--color-border)]/40 mt-2">
+    <div class="mb-2 flex items-center gap-1.5 text-[9px] font-mono uppercase tracking-[0.12em] text-[var(--color-primary)]">
       <span>{formatDate(startDate)}</span>
       <span class="text-[var(--color-border)]">•</span>
-      <span class="truncate max-w-[150px]">{location}</span>
+      <span class="truncate max-w-[130px]">{location}</span>
     </div>
 
-    <h3 class="font-serif text-lg font-semibold leading-tight text-[var(--color-foreground)] hover:text-[var(--color-primary)]">
-      <a href={`/events/${event.id || event.slug}`}>{title}</a>
+    <h3 class="font-serif text-lg font-medium leading-tight text-[var(--color-foreground)] transition-colors group-hover:text-[var(--color-primary)]">
+      <a href={href}>{title}</a>
     </h3>
 
-    <p class="mt-2 flex-1 text-sm text-[var(--color-muted)] line-clamp-3">
+    <p class="mt-2.5 flex-1 text-sm text-[var(--color-muted)] line-clamp-3 leading-relaxed">
       {description}
     </p>
 
-    <div class="mt-4 pt-4 border-t border-[var(--color-border)]">
-      <Button href={`/events/${event.id || event.slug}`} variant="secondary" size="sm" class="w-full text-center">
-        Detail Event &rarr;
+    <div class="mt-4 pt-4 border-t border-[var(--color-border)]/30">
+      <Button href={href} variant="outline" size="sm" class="w-full text-center text-[10px] uppercase font-mono tracking-[0.1em]" hasArrow>
+        Detail Event
       </Button>
     </div>
   </div>

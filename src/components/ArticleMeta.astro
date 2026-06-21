@@ -9,10 +9,10 @@ interface Props {
 const { author, publishDate, minutes, class: className } = Astro.props
 ---
 
-<div class:list={["flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-[var(--color-muted)]", className]}>
-  <span class="font-medium text-[var(--color-foreground)]">{author}</span>
-  <span aria-hidden="true">&middot;</span>
+<div class:list={["flex flex-wrap items-center gap-x-3 gap-y-1 text-xs font-mono uppercase tracking-[0.12em] text-[var(--color-muted)]", className]}>
+  <span class="font-semibold text-[var(--color-primary)]">{author}</span>
+  <span aria-hidden="true" class="text-[var(--color-border)]">&middot;</span>
   <time datetime={publishDate.toISOString()}>{formatDate(publishDate)}</time>
-  <span aria-hidden="true">&middot;</span>
-  <span>{minutes} menit baca</span>
+  <span aria-hidden="true" class="text-[var(--color-border)]">&middot;</span>
+  <span>{minutes} m baca</span>
 </div>

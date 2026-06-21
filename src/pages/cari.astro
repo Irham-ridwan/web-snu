@@ -120,18 +120,23 @@ import SearchBar from "@/components/SearchBar.astro"
           const excerpt = data.excerpt || ""
           
           return `
-            <article class="p-5 border border-[var(--color-border)] bg-[var(--color-surface)] rounded-[var(--radius-lg)] transition-all hover:border-[var(--color-primary)]/40 hover:shadow-sm">
-              <h3 class="font-serif text-lg font-bold text-[var(--color-foreground)] hover:text-[var(--color-primary)]">
-                <a href="${data.url}">${title}</a>
-              </h3>
-              <p class="mt-2 text-sm text-[var(--color-muted)] leading-relaxed excerpt-highlight">
-                ${excerpt}
-              </p>
-              <div class="mt-4 flex items-center justify-between text-xs text-[var(--color-muted)] border-t border-[var(--color-border)]/50 pt-3">
-                <span class="bg-[var(--color-surface-2)] px-2 py-0.5 rounded border border-[var(--color-border)] font-mono">
-                  ${data.url}
-                </span>
-                <a href="${data.url}" class="font-semibold text-[var(--color-primary)] hover:underline">Baca Selengkapnya &rarr;</a>
+            <article class="p-1.5 border border-[var(--color-border)] bg-[var(--color-surface)] rounded-[1.75rem] shadow-[0_12px_24px_-12px_rgba(0,0,0,0.3)] transition-premium hover:shadow-[0_20px_32px_-10px_rgba(0,0,0,0.45)] hover:border-[var(--color-primary)]/30 hover:-translate-y-0.5 group">
+              <div class="p-5 rounded-[1.375rem] bg-[var(--color-surface-2)]/30 border border-[var(--color-border)]/40 flex flex-col gap-3">
+                <h3 class="font-serif text-lg font-medium text-[var(--color-foreground)] transition-colors group-hover:text-[var(--color-primary)]">
+                  <a href="${data.url}">${title}</a>
+                </h3>
+                <p class="text-sm text-[var(--color-muted)] leading-relaxed excerpt-highlight">
+                  ${excerpt}
+                </p>
+                <div class="mt-4 flex items-center justify-between text-xs text-[var(--color-muted)] border-t border-[var(--color-border)]/30 pt-3">
+                  <span class="bg-[var(--color-surface-2)]/50 px-3 py-1 rounded-full border border-[var(--color-border)] font-mono text-[9px] uppercase tracking-[0.1em] text-[var(--color-muted)]">
+                    ${data.url.replace('/index.html', '').replace('.html', '')}
+                  </span>
+                  <a href="${data.url}" class="font-semibold text-[var(--color-accent)] inline-flex items-center gap-1.5 group/link">
+                    Baca 
+                    <span class="inline-block transition-transform duration-300 group-hover/link:translate-x-1">&rarr;</span>
+                  </a>
+                </div>
               </div>
             </article>
           `

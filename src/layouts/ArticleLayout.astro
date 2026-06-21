@@ -23,6 +23,12 @@ const { entry, headings, rawBody, related } = Astro.props
 const { title, description, author, publishDate, tags, seri, cover, draft, sourceUrl } = entry.data
 const minutes = readingTime(rawBody)
 const toc: TocItem[] = buildToc(headings)
+
+const fallbackCovers = [
+  "/cover_temple.jpg",
+  "/cover_meditation.jpg",
+]
+const finalCover = cover || fallbackCovers[entry.id.charCodeAt(0) % fallbackCovers.length]
 ---
 
 <BaseLayout title={title} description={description} type="article" image={cover ? undefined : "/og-default.png"}>
@@ -32,32 +38,52 @@ const toc: TocItem[] = buildToc(headings)
     <Breadcrumb items={[{ label: "Artikel", href: "/artikel" }, { label: title }]} />
 
     <header class="mb-8">
-      <div class="mb-4 flex flex-wrap items-center gap-2">
+      <div class="mb-5 flex flex-wrap items-center gap-1.5">
         {seri && <SeriBadge seri={seri} />}
+        {tags && tags.map(tag => {
+           let colorClass = "bg-neutral-800 text-neutral-300";
+           if (tag === "niskala" || tag === "lore" || tag === "history") colorClass = "bg-[#b85a3c]/15 text-[#e68a6c] border border-[#b85a3c]/25";
+           else if (tag === "sekala" || tag === "meditation" || tag === "nature") colorClass = "bg-[#1aa79b]/15 text-[#1aa79b] border border-[#1aa79b]/25";
+           else if (tag === "outbound" || tag === "space-grotesk" || tag === "astronomy") colorClass = "bg-[#385e54]/15 text-[#82b4a5] border border-[#385e54]/25";
+           else if (tag === "english-hours" || tag === "mythology") colorClass = "bg-[#d5c39a]/15 text-[#d5c39a] border border-[#d5c39a]/25";
+           return (
+             <span class={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[9px] font-mono uppercase tracking-[0.1em] ${colorClass}`}>
+               {tag}
+             </span>
+           )
+        })}
         {draft && (
-          <span class="inline-flex items-center rounded-full bg-[var(--color-accent)]/20 px-2.5 py-0.5 text-xs font-semibold text-[var(--color-accent)]">
+          <span class="inline-flex items-center rounded-full bg-[var(--color-accent)]/15 px-2.5 py-0.5 text-[9px] font-mono uppercase tracking-[0.1em] text-[var(--color-accent)] border border-[var(--color-accent)]/20">
             Draf
           </span>
         )}
       </div>
 
-      <h1 class="font-serif text-3xl font-semibold leading-tight text-balance sm:text-4xl">
+      <h1 class="font-serif text-3xl font-medium leading-tight text-balance sm:text-4xl text-[var(--color-foreground)]">
         {title}
       </h1>
-      <p class="mt-4 text-lg leading-relaxed text-[var(--color-muted)] text-pretty">{description}</p>
+      <p class="mt-4 text-base sm:text-lg leading-relaxed text-[var(--color-muted)] text-pretty">{description}</p>
 
       <ArticleMeta author={author} publishDate={publishDate} minutes={minutes} class="mt-5" />
     </header>
 
     {
-      cover && (
-        <Image
-          src={cover}
-          alt={`Ilustrasi untuk artikel ${title}`}
-          widths={[480, 768, 1200]}
-          sizes="(min-width: 768px) 768px, 100vw"
-          class="mb-10 aspect-[16/9] w-full rounded-[var(--radius-lg)] object-cover"
-        />
+      finalCover && (
+        typeof finalCover === "string" ? (
+          <img
+            src={finalCover}
+            alt=""
+            class="mb-10 aspect-[21/9] w-full rounded-[var(--radius-lg)] object-cover shadow-[0_8px_24px_rgba(0,0,0,0.5)] border border-[var(--color-border)]/20"
+          />
+        ) : (
+          <Image
+            src={finalCover}
+            alt={`Ilustrasi untuk artikel ${title}`}
+            widths={[480, 768, 1200]}
+            sizes="(min-width: 768px) 768px, 100vw"
+            class="mb-10 aspect-[21/9] w-full rounded-[var(--radius-lg)] object-cover shadow-[0_8px_24px_rgba(0,0,0,0.5)] border border-[var(--color-border)]/20"
+          />
+        )
       )
     }
 

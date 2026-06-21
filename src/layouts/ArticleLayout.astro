@@ -9,6 +9,7 @@ import RelatedArticles from "@/components/RelatedArticles.astro"
 import ReadingProgress from "@/components/ReadingProgress.astro"
 import TagBadge from "@/components/TagBadge.astro"
 import SeriBadge from "@/components/SeriBadge.astro"
+import WalineComments from "@/components/WalineComments.astro"
 import { buildToc, readingTime, seriLabel } from "@/lib/utils"
 import type { TocItem } from "@/lib/utils"
 import coverTemple from "@/assets/cover_temple.jpg"
@@ -120,6 +121,8 @@ const finalCover = cover || fallbackCovers[entry.id.charCodeAt(0) % fallbackCove
         </p>
       )
     }
+
+    <WalineComments path={`/artikel/${entry.id}`} />
 
     <RelatedArticles entries={related} />
   </div>

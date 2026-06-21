@@ -1,0 +1,140 @@
+---
+interface Props {
+  path?: string;
+}
+
+const { path } = Astro.props;
+const serverURL = import.meta.env.PUBLIC_WALINE_SERVER_URL || "https://sekala-niskala-comments.vercel.app";
+---
+
+<div 
+  class="mt-16 border-t border-[var(--color-border)]/40 pt-10" 
+  id="waline-container" 
+  data-server-url={serverURL}
+  data-path={path}
+>
+  <h2 class="font-serif text-2xl font-semibold mb-6 text-[var(--color-foreground)] flex items-center gap-2">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="text-[var(--color-primary)]">
+      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+    </svg>
+    Diskusi & Komentar
+  </h2>
+  
+  <div id="waline"></div>
+</div>
+
+<!-- Load Waline CSS Stylesheet from CDN -->
+<link rel="stylesheet" href="https://unpkg.com/@waline/client@v3/dist/waline.css" />
+
+<style is:global>
+  /* Premium theme overrides for Waline comments to match our design system */
+  #waline {
+    --waline-theme-color: var(--color-primary);
+    --waline-active-color: var(--color-primary);
+    --waline-bg-color: var(--color-surface);
+    --waline-bg-color-hover: var(--color-surface-2);
+    --waline-bg-color-light: rgba(255, 255, 255, 0.03);
+    --waline-color: var(--color-foreground);
+    --waline-border-color: var(--color-border);
+    --waline-disable-color: var(--color-muted);
+    --waline-info-bg-color: var(--color-surface-2);
+    --waline-info-color: var(--color-muted);
+    
+    font-family: inherit;
+    margin-top: 1.5rem;
+  }
+
+  html.dark #waline {
+    --waline-bg-color: var(--color-surface-2);
+    --waline-bg-color-hover: var(--color-surface);
+    --waline-bg-color-light: rgba(0, 0, 0, 0.2);
+    --waline-border-color: rgba(255, 255, 255, 0.08);
+  }
+
+  /* Override Waline input borders for a sleek focus effect */
+  .wl-editor:focus {
+    border-color: var(--color-primary) !important;
+    box-shadow: 0 0 0 2px rgba(56, 94, 84, 0.2) !important;
+  }
+
+  /* Adjust buttons and badges to match rounded UI style */
+  .wl-btn {
+    border-radius: 9999px !important;
+    font-family: monospace !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.05em !important;
+    font-size: 11px !important;
+    padding: 0.5rem 1.25rem !important;
+    font-weight: 600 !important;
+  }
+
+  .wl-meta-head, .wl-card-item {
+    border-color: var(--color-border) / 20 !important;
+  }
+
+  /* Responsive styling adjustments */
+  .wl-card {
+    border-bottom: 1px dashed var(--color-border) / 30 !important;
+    padding: 1.5rem 0 !important;
+  }
+
+  .wl-header {
+    border-bottom: 1px solid var(--color-border) / 30 !important;
+  }
+</style>
+
+<!-- Load Waline JS from CDN and initialize -->
+<script is:inline src="https://unpkg.com/@waline/client@v3/dist/waline.js"></script>
+<script is:inline>
+  function initWaline() {
+    const container = document.getElementById('waline-container');
+    const el = document.getElementById('waline');
+    if (!container || !el || typeof Waline === 'undefined') return;
+
+    const serverURL = container.dataset.serverUrl;
+    const path = container.dataset.path || window.location.pathname;
+
+    if (!serverURL) {
+      console.warn("Waline comments: serverURL is missing.");
+      return;
+    }
+
+    Waline.init({
+      el: '#waline',
+      serverURL: serverURL,
+      path: path,
+      dark: 'html.dark, html[class~="dark"]',
+      lang: 'en', // Set base as English and customize locale strings to Indonesian below
+      locale: {
+        placeholder: 'Bagikan pemikiran atau tanggapan Anda di sini... (Mendukung Markdown)',
+        placeholder_empty: 'Jadilah yang pertama berkomentar!',
+        link: 'Tautan',
+        gif: 'GIF',
+        code: 'Kode',
+        reply: 'Balas',
+        cancelReply: 'Batal',
+        submit: 'Kirim',
+        nick: 'Nama Panggilan',
+        mail: 'Email',
+        link_title: 'Situs Web (opsional)',
+        anonymous: 'Anonim',
+        sofa: 'Belum ada komentar di sini. Mulai diskusinya!',
+        admin: 'Admin',
+        word: 'Kata',
+        wordHint: 'Tulisan Anda terlalu panjang, silakan dipersingkat.',
+      },
+      emoji: [
+        'https://unpkg.com/@waline/emojis@1.2.0/weibo',
+        'https://unpkg.com/@waline/emojis@1.2.0/alus',
+      ],
+      recaptchaV3Key: '', // optional recaptcha key
+      search: false, // disable search emoji if not needed
+    });
+  }
+
+  // Initialize on page load
+  initWaline();
+
+  // Re-run setup on view transitions/navigation in Astro
+  document.addEventListener('astro:page-load', initWaline);
+</script>

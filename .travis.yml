@@ -1,0 +1,26 @@
+language:node_js
+node_js:
+  - "24"
+
+cache:
+  directories:
+    - ~/.pnpm-store
+
+before_install:
+  - corepack enable
+  - corepack prepare pnpm@latest --activate
+
+install:
+  - pnpm install
+
+script:
+  - pnpm run build
+
+deploy:
+  provider: pages
+  skip_cleanup: true
+  github_token: $GITHUB_TOKEN
+  local_dir: dist
+  keep_history: true
+  on:
+    branch: main

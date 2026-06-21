@@ -1,9 +1,9 @@
 export const SITE = {
-  name: "Sekala Niskala",
+  name: "Sekala Niskala Universe",
   shortName: "SNU",
-  title: "Portal Sekala Niskala",
+  title: "SEKALA NISKALA UNIVERSE — Dibatas nyata dan tak kasat",
   description:
-    "Ruang tulisan komunitas Sekala Niskala — refleksi tentang yang tampak (sekala) dan yang tak tampak (niskala), perjalanan, dan ruang-ruang di antaranya.",
+    "Di sinilah kita berkumpul, dalam ekosistem dimana batas antara yang nyata dan yang tak terlihat menjadi kabur. Sejatinya SEKALA-NISKALA, adalah dua sisi kehidupan yang saling berjalin, membentuk tarian yang indah nan misterius, keduanya berdampingan dan saling melengkapi dengan kesadaran.",
   url: "https://snu.pages.dev",
   locale: "id-ID",
   defaultAuthor: "Komunitas SNU",

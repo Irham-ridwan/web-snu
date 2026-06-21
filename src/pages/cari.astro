@@ -61,8 +61,8 @@ import SearchBar from "@/components/SearchBar.astro"
   async function loadPagefind() {
     if (pagefind) return pagefind
     try {
-      // @ts-ignore
-      pagefind = await import(/* @vite-ignore */ "/pagefind/pagefind.js")
+      const pagefindPath = "/pagefind/pagefind.js"
+      pagefind = await import(/* @vite-ignore */ pagefindPath)
       await pagefind.init()
       return pagefind
     } catch (e) {

@@ -172,6 +172,88 @@ export default config({
         }),
       },
     }),
+    tags: collection({
+      label: "Tags",
+      path: "src/content/tags/*",
+      format: { data: "json" },
+      slugField: "name",
+      schema: {
+        name: fields.text({ label: "ID Tag (Lowercase, e.g. spiritual)", validation: { isRequired: true } }),
+        label: fields.text({ label: "Label Tampilan Tag (e.g. Spiritual)", validation: { isRequired: true } }),
+        description: fields.text({ label: "Deskripsi Singkat" }),
+        colorClass: fields.select({
+          label: "Aksen Warna Tag",
+          options: [
+            { label: "Cokelat (Niskala)", value: "niskala" },
+            { label: "Hijau (Sekala)", value: "sekala" },
+            { label: "Hijau Gelap (Outbound)", value: "outbound" },
+            { label: "Emas (English)", value: "english" },
+            { label: "Netral (Grey)", value: "neutral" }
+          ],
+          defaultValue: "neutral"
+        })
+      }
+    }),
+    seri: collection({
+      label: "Seri",
+      path: "src/content/seri/*",
+      format: { data: "json" },
+      slugField: "name",
+      schema: {
+        name: fields.text({ label: "ID Seri (Lowercase, e.g. wpm-saga)", validation: { isRequired: true } }),
+        label: fields.text({ label: "Label Tampilan Seri", validation: { isRequired: true } }),
+        description: fields.text({ label: "Deskripsi Seri" }),
+      }
+    }),
+    gallery: collection({
+      label: "Galeri Dokumentasi",
+      path: "src/content/gallery/*",
+      format: { data: "json" },
+      slugField: "slug",
+      schema: {
+        title: fields.text({ label: "Judul Kegiatan", validation: { isRequired: true } }),
+        slug: fields.slug({ name: { label: "Slug URL" } }),
+        description: fields.text({ label: "Deskripsi Singkat", validation: { isRequired: true } }),
+        date: fields.date({ label: "Tanggal Kegiatan", validation: { isRequired: true } }),
+        images: fields.array(
+          fields.object({
+            image: fields.image({
+              label: "Foto",
+              directory: "public/images/gallery",
+              publicPath: "/images/gallery/",
+            }),
+            caption: fields.text({ label: "Keterangan Foto" })
+          }),
+          {
+            label: "Koleksi Foto",
+            itemLabel: (props) => props.fields.caption.value || "Foto"
+          }
+        ),
+        draft: fields.checkbox({ label: "Draf (Sembunyikan)", defaultValue: false }),
+      }
+    }),
+    pages: collection({
+      label: "Halaman Kustom",
+      path: "src/content/pages/*",
+      format: { contentField: "content" },
+      slugField: "slug",
+      schema: {
+        title: fields.text({ label: "Judul Halaman", validation: { isRequired: true } }),
+        slug: fields.slug({ name: { label: "Slug URL (e.g. donasi)" } }),
+        description: fields.text({ label: "Deskripsi Singkat (SEO)", validation: { isRequired: true } }),
+        draft: fields.checkbox({ label: "Draf (Sembunyikan)", defaultValue: false }),
+        content: fields.mdx({
+          label: "Konten Halaman",
+          formatting: true,
+          links: true,
+          dividers: true,
+          images: {
+            directory: "public/images/pages",
+            publicPath: "/images/pages/",
+          }
+        })
+      }
+    }),
   },
   singletons: {
     settings: singleton({
@@ -193,6 +275,10 @@ export default config({
         announcementActive: fields.checkbox({ label: "Aktifkan Banner Pengumuman Berjalan (Ticker Banner)", defaultValue: false }),
         announcementText: fields.text({ label: "Teks Pengumuman", defaultValue: "" }),
         announcementLink: fields.text({ label: "Link Pengumuman (Opsional)", defaultValue: "" }),
+        enableDynamicTags: fields.checkbox({ label: "Aktifkan Pengelolaan Tag Dinamis (On/Off)", defaultValue: false }),
+        enableDynamicSeri: fields.checkbox({ label: "Aktifkan Pengelolaan Seri Dinamis (On/Off)", defaultValue: false }),
+        enableGallery: fields.checkbox({ label: "Aktifkan Fitur Galeri Dokumentasi (On/Off)", defaultValue: false }),
+        enableCustomPages: fields.checkbox({ label: "Aktifkan Fitur Halaman Statis Kustom (On/Off)", defaultValue: false }),
       },
     }),
   },

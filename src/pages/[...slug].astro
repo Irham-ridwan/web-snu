@@ -1,0 +1,49 @@
+---
+import { getCollection, render } from "astro:content"
+import BaseLayout from "@/layouts/BaseLayout.astro"
+import siteSettings from "@/content/settings/site.json"
+
+export async function getStaticPaths() {
+  const allPages = await getCollection("pages")
+  return allPages.map((page) => ({
+    params: { slug: page.id },
+    props: { page },
+  }))
+}
+
+const { page } = Astro.props
+const enableCustomPages = siteSettings.enableCustomPages
+
+// Render MDX content
+const { Content } = await render(page)
+---
+
+{
+  enableCustomPages && !page.data.draft ? (
+    <BaseLayout title={page.data.title} description={page.data.description}>
+      <article class="mx-auto max-w-3xl px-4 py-14 sm:px-6">
+        <header class="mb-10 text-center space-y-3">
+          <h1 class="font-serif text-4xl sm:text-5xl font-bold tracking-tight text-[var(--color-foreground)]">{page.data.title}</h1>
+          <p class="text-sm text-[var(--color-muted)] leading-relaxed italic">{page.data.description}</p>
+          <div class="h-0.5 w-16 bg-[var(--color-primary)]/45 mx-auto mt-4"></div>
+        </header>
+        <div class="prose prose-invert prose-emerald max-w-none leading-relaxed">
+          <Content />
+        </div>
+      </article>
+    </BaseLayout>
+  ) : (
+    <html lang="id">
+      <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="refresh" content="0;url=/404" />
+        <title>Mengarahkan...</title>
+      </head>
+      <body class="bg-black text-neutral-400 flex items-center justify-center min-h-screen font-sans">
+        <div class="text-center">
+          <p class="text-sm">Mengarahkan ke halaman 404...</p>
+        </div>
+      </body>
+    </html>
+  )
+}

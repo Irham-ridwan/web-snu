@@ -53,4 +53,49 @@ const kontributor = defineCollection({
     }),
 })
 
-export const collections = { artikel, events, kontributor }
+const tags = defineCollection({
+  loader: glob({ pattern: "**/*.json", base: "./src/content/tags" }),
+  schema: z.object({
+    name: z.string(),
+    label: z.string(),
+    description: z.string().optional(),
+    colorClass: z.enum(["niskala", "sekala", "outbound", "english", "neutral"]).default("neutral"),
+  }),
+})
+
+const seri = defineCollection({
+  loader: glob({ pattern: "**/*.json", base: "./src/content/seri" }),
+  schema: z.object({
+    name: z.string(),
+    label: z.string(),
+    description: z.string().optional(),
+  }),
+})
+
+const gallery = defineCollection({
+  loader: glob({ pattern: "**/*.json", base: "./src/content/gallery" }),
+  schema: ({ image }) =>
+    z.object({
+      title: z.string(),
+      description: z.string(),
+      date: z.coerce.date(),
+      images: z.array(
+        z.object({
+          image: image(),
+          caption: z.string().optional(),
+        })
+      ),
+      draft: z.boolean().default(false),
+    }),
+})
+
+const pages = defineCollection({
+  loader: glob({ pattern: "**/*.{md,mdx}", base: "./src/content/pages" }),
+  schema: z.object({
+    title: z.string(),
+    description: z.string(),
+    draft: z.boolean().default(false),
+  }),
+})
+
+export const collections = { artikel, events, kontributor, tags, seri, gallery, pages }

@@ -8,5 +8,9 @@
   "rssUrl": "https://politepaul.com/fd/mdwa5gNFMeXk.xml",
   "announcementActive": false,
   "announcementText": "Pendaftaran Kelas Meditasi Senin Weton telah dibuka! Hubungi admin untuk pendaftaran.",
-  "announcementLink": "/events"
+  "announcementLink": "/events",
+  "enableDynamicTags": false,
+  "enableDynamicSeri": false,
+  "enableGallery": false,
+  "enableCustomPages": false
 }

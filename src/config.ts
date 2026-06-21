@@ -14,12 +14,13 @@ export const NAV_LINKS = [
   { label: "Beranda", href: "/" },
   { label: "Artikel", href: "/artikel" },
   { label: "Events", href: "/events" },
+  ...(siteSettings.enableGallery ? [{ label: "Galeri", href: "/galeri" }] : []),
   { label: "Tentang", href: "/tentang" },
   { label: "Kontributor", href: "/kontributor" },
-] as const
+]
 
 // Taksonomi yang dikurasi untuk label & deskripsi yang manusiawi.
-export const TAG_META: Record<string, { label: string; description: string }> = {
+const baseTags: Record<string, { label: string; description: string; colorClass?: string }> = {
   "wpm-saga": {
     label: "WPM [SAGA]",
     description: "Kisah-kisah fiksi fantasi gaib dan mistis.",
@@ -38,11 +39,46 @@ export const TAG_META: Record<string, { label: string; description: string }> = 
   },
 }
 
-export const SERI_META: Record<string, { label: string; description: string }> = {
+const baseSeri: Record<string, { label: string; description: string }> = {
   "wpm-saga": {
     label: "WPM [SAGA]",
     description: "Kisah fiksi fantasi mistis tentang Sakti, Bayu, dan perjalanan dimensi transisi.",
   },
+}
+
+export const TAG_META = { ...baseTags }
+if (siteSettings.enableDynamicTags) {
+  const dynamicTagsFiles = import.meta.glob<{ default: { name: string; label: string; description?: string; colorClass?: string } }>(
+    "/src/content/tags/*.json",
+    { eager: true }
+  )
+  Object.values(dynamicTagsFiles).forEach(file => {
+    const data = file.default
+    if (data && data.name) {
+      TAG_META[data.name] = {
+        label: data.label,
+        description: data.description || "",
+        colorClass: data.colorClass,
+      }
+    }
+  })
+}
+
+export const SERI_META = { ...baseSeri }
+if (siteSettings.enableDynamicSeri) {
+  const dynamicSeriFiles = import.meta.glob<{ default: { name: string; label: string; description?: string } }>(
+    "/src/content/seri/*.json",
+    { eager: true }
+  )
+  Object.values(dynamicSeriFiles).forEach(file => {
+    const data = file.default
+    if (data && data.name) {
+      SERI_META[data.name] = {
+        label: data.label,
+        description: data.description || "",
+      }
+    }
+  })
 }
 
 export const QUORA_URL = siteSettings.quoraUrl

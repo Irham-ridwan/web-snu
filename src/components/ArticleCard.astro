@@ -3,6 +3,7 @@ import { Image } from "astro:assets"
 import type { CollectionEntry } from "astro:content"
 import { formatDate } from "@/lib/utils"
 import SeriBadge from "@/components/SeriBadge.astro"
+import { TAG_META } from "@/config"
 import coverTemple from "@/assets/cover_temple.jpg"
 import coverMeditation from "@/assets/cover_meditation.jpg"
 
@@ -62,14 +63,17 @@ const finalCover = cover || fallbackCovers[entry.id.charCodeAt(0) % fallbackCove
     <div class="flex flex-wrap items-center gap-1.5">
       {seri && <SeriBadge seri={seri} />}
       {tags && tags.map(tag => {
+         const meta = TAG_META[tag];
+         const designColor = meta?.colorClass || tag;
+         const label = meta?.label || tag;
          let colorClass = "bg-neutral-800 text-neutral-300";
-         if (tag === "niskala" || tag === "lore" || tag === "history") colorClass = "bg-[#b85a3c]/15 text-[#e68a6c] border border-[#b85a3c]/25";
-         else if (tag === "sekala" || tag === "meditation" || tag === "nature") colorClass = "bg-[#1aa79b]/15 text-[#1aa79b] border border-[#1aa79b]/25";
-         else if (tag === "outbound" || tag === "space-grotesk" || tag === "astronomy") colorClass = "bg-[#385e54]/15 text-[#82b4a5] border border-[#385e54]/25";
-         else if (tag === "english-hours" || tag === "mythology") colorClass = "bg-[#d5c39a]/15 text-[#d5c39a] border border-[#d5c39a]/25";
+         if (designColor === "niskala" || designColor === "lore" || designColor === "history") colorClass = "bg-[#b85a3c]/15 text-[#e68a6c] border border-[#b85a3c]/25";
+         else if (designColor === "sekala" || designColor === "meditation" || designColor === "nature") colorClass = "bg-[#1aa79b]/15 text-[#1aa79b] border border-[#1aa79b]/25";
+         else if (designColor === "outbound" || designColor === "space-grotesk" || designColor === "astronomy") colorClass = "bg-[#385e54]/15 text-[#82b4a5] border border-[#385e54]/25";
+         else if (designColor === "english" || designColor === "english-hours" || designColor === "mythology") colorClass = "bg-[#d5c39a]/15 text-[#d5c39a] border border-[#d5c39a]/25";
          return (
            <span class={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[9px] font-mono uppercase tracking-[0.1em] ${colorClass}`}>
-             {tag}
+             {label}
            </span>
          )
       })}

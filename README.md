@@ -110,6 +110,31 @@ Kami menambahkan halaman **"Pengaturan Situs" (Global Settings)** di Keystatic C
    * Isi kolom **Link Pengumuman (Opsional)** jika ingin mengarahkan pembaca ke halaman tertentu saat banner diklik (misal: `/events` atau `/artikel/announcement-kelas-meditasi-dan-kongkow-senin-weton-dan-keberadaan-makhluk-gaib`).
    * Klik **Save** di pojok kanan atas. Banner pengumuman premium dengan indikator denyut neon akan otomatis tampil di atas menu navigasi seluruh halaman web Anda.
 
+### 5. Mengaktifkan & Menggunakan Fitur Tambahan (On/Off Toggles)
+
+Kami telah mengimplementasikan 3 fitur baru yang canggih di Keystatic CMS, namun disetel **OFF (Nonaktif)** secara default agar tidak terlihat oleh publik sampai Anda siap mengaktifkannya sendiri melalui halaman **Pengaturan Situs** (CMS Admin > Singletons > Pengaturan Situs):
+
+#### A. 🏷️ Pengelolaan Tag & Seri Dinamis (`enableDynamicTags` & `enableDynamicSeri`)
+*   **Fungsi:** Mengubah deskripsi, nama, dan visual warna tag/seri secara instan tanpa menyentuh file kode.
+*   **Cara Penggunaan:**
+    1. Centang **Aktifkan Pengelolaan Tag/Seri Dinamis** di Pengaturan Situs.
+    2. Tambahkan tag atau seri baru melalui menu **Tags** atau **Seri** di panel Keystatic kiri.
+    3. Anda bisa mengatur warna aksen tag (Cokelat Niskala, Hijau Sekala, Emas, dll.) yang otomatis memengaruhi warna badge di kartu artikel halaman utama.
+
+#### B. 📸 Galeri Dokumentasi Kegiatan (`enableGallery`)
+*   **Fungsi:** Menampilkan arsip foto kegiatan outbound / retret meditasi di halaman khusus `/galeri` dengan tata letak grid yang modern.
+*   **Cara Penggunaan:**
+    1. Buat album foto baru di menu **Galeri Dokumentasi** (masukkan judul kegiatan, tanggal, deskripsi, dan upload beberapa foto lengkap dengan keterangan/caption-nya).
+    2. Aktifkan opsi **Aktifkan Fitur Galeri Dokumentasi** di Pengaturan Situs.
+    3. Ketika diaktifkan, menu navigasi **"Galeri"** akan muncul otomatis di header & footer, dan halaman `/galeri` siap diakses publik. Jika dinonaktifkan, menu akan disembunyikan dan halaman `/galeri` akan menampilkan pesan penonaktifan secara elegan.
+
+#### C. 📑 Halaman Statis Kustom (`enableCustomPages`)
+*   **Fungsi:** Membuat halaman statis tambahan (seperti `/donasi`, `/aturan`, dll.) langsung dari CMS editor.
+*   **Cara Penggunaan:**
+    1. Tulis halaman baru di menu **Halaman Kustom** (isi judul, deskripsi SEO, slug URL tujuan seperti `donasi`, dan tulis isi kontennya menggunakan MDX Rich Text Editor).
+    2. Aktifkan **Aktifkan Fitur Halaman Statis Kustom** di Pengaturan Situs.
+    3. Halaman tersebut akan langsung bisa diakses pada URL tujuan (misal: `https://domain-anda.com/donasi`). Jika dinonaktifkan, halaman tersebut otomatis me-redirect pengunjung ke halaman 404 demi keamanan.
+
 ---
 
 ## 🔗 Panduan Menyematkan (Embed) Postingan Quora

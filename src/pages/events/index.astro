@@ -1,0 +1,82 @@
+---
+import { getCollection } from "astro:content"
+import BaseLayout from "@/layouts/BaseLayout.astro"
+import EventCard from "@/components/EventCard.astro"
+import EmptyState from "@/components/EmptyState.astro"
+
+const allEvents = await getCollection("events", ({ data }) => import.meta.env.DEV || !data.draft)
+
+// Separate upcoming/ongoing from past events
+const now = new Date()
+const activeEvents = allEvents
+  .filter((e) => {
+    const end = e.data.endDate ?? new Date(e.data.startDate.getTime() + 24 * 60 * 60 * 1000)
+    return end >= now
+  })
+  .sort((a, b) => a.data.startDate.valueOf() - b.data.startDate.valueOf()) // closest first
+
+const pastEvents = allEvents
+  .filter((e) => {
+    const end = e.data.endDate ?? new Date(e.data.startDate.getTime() + 24 * 60 * 60 * 1000)
+    return end < now
+  })
+  .sort((a, b) => b.data.startDate.valueOf() - a.data.startDate.valueOf()) // newest past first
+---
+
+<BaseLayout title="Events" description="Daftar kegiatan, diskusi Arktalk, retret keheningan, dan perjalanan komunitas Sekala Niskala.">
+  <div class="mx-auto max-w-5xl px-4 py-14 sm:px-6">
+    <header class="mb-14 text-center max-w-2xl mx-auto">
+      <span class="text-xs font-semibold uppercase tracking-widest text-[var(--color-primary)]">Komunitas</span>
+      <h1 class="mt-2 font-serif text-3xl font-bold sm:text-4xl md:text-5xl text-[var(--color-foreground)]">
+        Ruang Kegiatan Kami
+      </h1>
+      <p class="mt-4 text-base text-[var(--color-muted)] leading-relaxed">
+        Mengalir dari perjumpaan daring hingga laku petualangan fisik di tengah alam bebas Nusantara.
+      </p>
+    </header>
+
+    <!-- Active & Upcoming Events Section -->
+    <section class="mb-16" aria-labelledby="active-events-heading">
+      <h2 id="active-events-heading" class="mb-6 font-serif text-2xl font-bold text-[var(--color-foreground)] border-b border-[var(--color-border)] pb-2 flex items-center gap-2">
+        Akan Datang & Sedang Berlangsung
+        <span class="inline-flex items-center rounded-full bg-[var(--color-accent)]/15 px-2 py-0.5 text-xs font-semibold text-[var(--color-accent)]">
+          {activeEvents.length}
+        </span>
+      </h2>
+      
+      {
+        activeEvents.length > 0 ? (
+          <div class="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+            {activeEvents.map((event) => (
+              <EventCard event={event} />
+            ))}
+          </div>
+        ) : (
+          <EmptyState
+            title="Belum ada event terjadwal"
+            description="Kami sedang menyusun rencana kegiatan baru. Gabung Discord kami untuk mendapatkan pengumuman pertama."
+          />
+        )
+      }
+    </section>
+
+    <!-- Past Events Section -->
+    {
+      pastEvents.length > 0 && (
+        <section aria-labelledby="past-events-heading">
+          <h2 id="past-events-heading" class="mb-6 font-serif text-2xl font-bold text-[var(--color-foreground)] border-b border-[var(--color-border)] pb-2 flex items-center gap-2">
+            Kegiatan Sebelumnya
+            <span class="inline-flex items-center rounded-full bg-[var(--color-surface-2)] px-2 py-0.5 text-xs font-semibold text-[var(--color-muted)] border border-[var(--color-border)]">
+              {pastEvents.length}
+            </span>
+          </h2>
+          <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 opacity-80">
+            {pastEvents.map((event) => (
+              <EventCard event={event} />
+            ))}
+          </div>
+        </section>
+      )
+    }
+  </div>
+</BaseLayout>

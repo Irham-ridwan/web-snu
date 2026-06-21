@@ -1,0 +1,86 @@
+---
+import { getCollection } from "astro:content"
+import BaseLayout from "@/layouts/BaseLayout.astro"
+import { Image } from "astro:assets"
+
+const kontributorList = await getCollection("kontributor")
+// Sort contributors by order
+const sortedKontributor = kontributorList.sort((a, b) => a.data.order - b.data.order)
+---
+
+<BaseLayout title="Kontributor" description="Para penulis, pemikir, dan penjelajah di balik Portal Sekala Niskala.">
+  <div class="mx-auto max-w-5xl px-4 py-14 sm:px-6">
+    <header class="mb-14 text-center max-w-2xl mx-auto">
+      <span class="text-xs font-semibold uppercase tracking-widest text-[var(--color-primary)]">Tim Penulis</span>
+      <h1 class="mt-2 font-serif text-3xl font-bold sm:text-4xl md:text-5xl text-[var(--color-foreground)]">
+        Para Penjaga Ruang
+      </h1>
+      <p class="mt-4 text-base text-[var(--color-muted)] leading-relaxed">
+        Mereka yang mendedikasikan waktu dan gagasan untuk mengeksplorasi garis batas antara yang nyata (sekala) dan yang sunyi (niskala).
+      </p>
+    </header>
+
+    <div class="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
+      {
+        sortedKontributor.map((item) => {
+          const { name, role, bio, avatar, socials } = item.data
+          return (
+            <article class="group relative flex flex-col justify-between overflow-hidden rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-[var(--color-primary)]/50 hover:shadow-lg">
+              <div>
+                <div class="relative mb-5 flex justify-center">
+                  <div class="relative h-24 w-24 overflow-hidden rounded-full border-2 border-[var(--color-border)] transition-colors group-hover:border-[var(--color-primary)]">
+                    {avatar ? (
+                      <Image
+                        src={avatar}
+                        alt={`Foto profil ${name}`}
+                        width={96}
+                        height={96}
+                        class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      />
+                    ) : (
+                      <div class="flex h-full w-full items-center justify-center bg-[var(--color-surface-2)] text-[var(--color-muted)]">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                          <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                <div class="text-center">
+                  <h3 class="font-serif text-lg font-bold text-[var(--color-foreground)] transition-colors group-hover:text-[var(--color-primary)]">
+                    {name}
+                  </h3>
+                  {role && (
+                    <p class="mt-1 text-xs font-medium tracking-wide uppercase text-[var(--color-primary)]">
+                      {role}
+                    </p>
+                  )}
+                  <p class="mt-4 text-xs sm:text-sm text-[var(--color-muted)] leading-relaxed">
+                    {bio}
+                  </p>
+                </div>
+              </div>
+
+              {socials && socials.length > 0 && (
+                <div class="mt-6 flex flex-wrap justify-center gap-2 border-t border-[var(--color-border)]/50 pt-4">
+                  {socials.map((soc) => (
+                    <a
+                      href={soc.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="inline-flex items-center rounded-md bg-[var(--color-surface-2)] px-2.5 py-1 text-[11px] font-medium text-[var(--color-muted)] transition-colors hover:bg-[var(--color-primary)]/10 hover:text-[var(--color-primary)]"
+                    >
+                      {soc.label}
+                    </a>
+                  ))}
+                </div>
+              )}
+            </article>
+          )
+        })
+      }
+    </div>
+  </div>
+</BaseLayout>

@@ -1,0 +1,193 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro"
+import SearchBar from "@/components/SearchBar.astro"
+---
+
+<BaseLayout title="Cari" description="Cari artikel, diskusi Arktalk, topik, atau penulis di Portal Sekala Niskala.">
+  <div class="mx-auto max-w-3xl px-4 py-14 sm:px-6">
+    <header class="mb-8 text-center">
+      <span class="text-xs font-semibold uppercase tracking-widest text-[var(--color-primary)]">Discovery</span>
+      <h1 class="mt-2 font-serif text-3xl font-bold sm:text-4xl text-[var(--color-foreground)]">
+        Telusuri Ruang Tulisan
+      </h1>
+      <p class="mt-2 text-sm text-[var(--color-muted)]">
+        Cari kata kunci, topik spiritual, penjelasan ilmiah, atau artikel kontributor.
+      </p>
+    </header>
+
+    <div class="space-y-8">
+      <SearchBar placeholder="Masukkan kata kunci pencarian..." />
+
+      <!-- States -->
+      <div id="search-status" class="text-center text-sm text-[var(--color-muted)] hidden"></div>
+      
+      <!-- Development warning if index not compiled -->
+      <div id="dev-warning" class="hidden rounded-lg border border-[var(--color-accent)]/20 bg-[var(--color-accent)]/5 p-4 text-xs text-[var(--color-accent)] max-w-xl mx-auto text-center leading-relaxed">
+        <strong>Pemberitahuan Sistem:</strong> File indeks Pagefind belum dibuat. 
+        Pencarian akan aktif secara penuh setelah Anda menjalankan perintah build produksi (<code class="bg-[var(--color-surface-2)] px-1 py-0.5 rounded">pnpm build</code>) 
+        yang memicu kompilasi indeks Pagefind Wasm.
+      </div>
+
+      <!-- Results Container -->
+      <div id="search-results" class="space-y-6">
+        <!-- Results will be dynamically populated here -->
+      </div>
+
+      <!-- Initial / Empty State Helper -->
+      <div id="search-initial-state" class="text-center py-12 border border-dashed border-[var(--color-border)] rounded-[var(--radius-lg)]">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="mx-auto text-[var(--color-muted)]/50 mb-3">
+          <circle cx="11" cy="11" r="7"></circle>
+          <path d="m21 21-4.3-4.3"></path>
+        </svg>
+        <p class="text-sm font-medium text-[var(--color-foreground)]">Mulai mengetik untuk mencari...</p>
+        <p class="text-xs text-[var(--color-muted)] mt-1">Cari berdasarkan judul, penulis, tag, atau isi konten.</p>
+      </div>
+    </div>
+  </div>
+</BaseLayout>
+
+<script>
+  let pagefind: any = null
+  let debounceTimer: any = null
+
+  const inputEl = document.getElementById("search-input") as HTMLInputElement
+  const clearEl = document.getElementById("search-clear-button") as HTMLButtonElement
+  const resultsContainer = document.getElementById("search-results")
+  const initialStateEl = document.getElementById("search-initial-state")
+  const statusEl = document.getElementById("search-status")
+  const devWarningEl = document.getElementById("dev-warning")
+
+  // Load Pagefind library
+  async function loadPagefind() {
+    if (pagefind) return pagefind
+    try {
+      // @ts-ignore
+      pagefind = await import("/pagefind/pagefind.js")
+      await pagefind.init()
+      return pagefind
+    } catch (e) {
+      console.warn("Pagefind index could not be loaded. This is expected in dev mode before building.", e)
+      if (devWarningEl && import.meta.env.DEV) {
+        devWarningEl.classList.remove("hidden")
+      }
+      throw e
+    }
+  }
+
+  async function handleSearch(query: string) {
+    if (!resultsContainer || !initialStateEl || !statusEl) return
+
+    query = query.trim()
+    if (!query) {
+      resultsContainer.innerHTML = ""
+      initialStateEl.classList.remove("hidden")
+      statusEl.classList.add("hidden")
+      clearEl?.classList.add("hidden")
+      return
+    }
+
+    clearEl?.classList.remove("hidden")
+    initialStateEl.classList.add("hidden")
+    statusEl.classList.remove("hidden")
+    statusEl.textContent = "Mencari..."
+
+    try {
+      const pf = await loadPagefind()
+      const search = await pf.search(query)
+      
+      const resultsCount = search.results.length
+      if (resultsCount === 0) {
+        statusEl.textContent = `Tidak ada hasil untuk "${query}"`
+        resultsContainer.innerHTML = `
+          <div class="text-center py-10">
+            <p class="text-sm font-medium text-[var(--color-foreground)]">Pencarian Tidak Ditemukan</p>
+            <p class="text-xs text-[var(--color-muted)] mt-1">Coba gunakan kata kunci lain atau periksa ejaan Anda.</p>
+          </div>
+        `
+        return
+      }
+
+      statusEl.textContent = `Menampilkan ${resultsCount} hasil untuk "${query}"`
+      
+      // Load top 10 results for performance
+      const topResults = search.results.slice(0, 10)
+      const dataResults = await Promise.all(topResults.map((r: any) => r.data()))
+
+      resultsContainer.innerHTML = dataResults
+        .map((data: any) => {
+          // If metadata title doesn't exist, fallback to URL or Untitled
+          const title = data.meta.title || "Untitled"
+          const excerpt = data.excerpt || ""
+          
+          return `
+            <article class="p-5 border border-[var(--color-border)] bg-[var(--color-surface)] rounded-[var(--radius-lg)] transition-all hover:border-[var(--color-primary)]/40 hover:shadow-sm">
+              <h3 class="font-serif text-lg font-bold text-[var(--color-foreground)] hover:text-[var(--color-primary)]">
+                <a href="${data.url}">${title}</a>
+              </h3>
+              <p class="mt-2 text-sm text-[var(--color-muted)] leading-relaxed excerpt-highlight">
+                ${excerpt}
+              </p>
+              <div class="mt-4 flex items-center justify-between text-xs text-[var(--color-muted)] border-t border-[var(--color-border)]/50 pt-3">
+                <span class="bg-[var(--color-surface-2)] px-2 py-0.5 rounded border border-[var(--color-border)] font-mono">
+                  ${data.url}
+                </span>
+                <a href="${data.url}" class="font-semibold text-[var(--color-primary)] hover:underline">Baca Selengkapnya &rarr;</a>
+              </div>
+            </article>
+          `
+        })
+        .join("")
+
+    } catch (err) {
+      statusEl.textContent = "Gagal memuat hasil pencarian."
+      resultsContainer.innerHTML = ""
+    }
+  }
+
+  // Set up event listeners
+  if (inputEl) {
+    inputEl.addEventListener("input", (e) => {
+      const target = e.target as HTMLInputElement
+      const val = target.value
+
+      if (debounceTimer) clearTimeout(debounceTimer)
+      debounceTimer = setTimeout(() => {
+        handleSearch(val)
+      }, 200)
+    })
+
+    // Preload pagefind assets on focus
+    inputEl.addEventListener("focus", () => {
+      loadPagefind().catch(() => {})
+    })
+  }
+
+  if (clearEl && inputEl) {
+    clearEl.addEventListener("click", () => {
+      inputEl.value = ""
+      handleSearch("")
+      inputEl.focus()
+    })
+  }
+
+  // Read query parameter on page load if present
+  window.addEventListener("DOMContentLoaded", () => {
+    const params = new URLSearchParams(window.location.search)
+    const q = params.get("q")
+    if (q && inputEl) {
+      inputEl.value = q
+      handleSearch(q)
+    }
+  })
+</script>
+
+<style is:global>
+  /* Highlight pagefind matches */
+  .excerpt-highlight mark {
+    background-color: var(--color-primary);
+    color: var(--color-primary-foreground);
+    padding: 0.1rem 0.2rem;
+    border-radius: var(--radius-sm);
+    font-weight: 500;
+  }
+</style>

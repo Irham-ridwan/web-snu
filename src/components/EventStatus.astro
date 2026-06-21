@@ -1,0 +1,61 @@
+---
+interface Props {
+  startDate: Date
+  endDate?: Date
+  class?: string
+}
+
+const { startDate, endDate, class: className = "" } = Astro.props
+
+const now = new Date()
+let status: "upcoming" | "ongoing" | "past" = "upcoming"
+let label = "Akan Datang"
+
+if (endDate) {
+  if (now > endDate) {
+    status = "past"
+    label = "Selesai"
+  } else if (now >= startDate && now <= endDate) {
+    status = "ongoing"
+    label = "Berlangsung"
+  } else {
+    status = "upcoming"
+    label = "Akan Datang"
+  }
+} else {
+  // If no end date, we consider it past after the start date + 1 day
+  const oneDayAfterStart = new Date(startDate.getTime() + 24 * 60 * 60 * 1000)
+  if (now > oneDayAfterStart) {
+    status = "past"
+    label = "Selesai"
+  } else if (now >= startDate && now <= oneDayAfterStart) {
+    status = "ongoing"
+    label = "Berlangsung"
+  } else {
+    status = "upcoming"
+    label = "Akan Datang"
+  }
+}
+
+const statusStyles = {
+  upcoming: "bg-[var(--color-primary)]/10 text-[var(--color-primary)] border-[var(--color-primary)]/20",
+  ongoing: "bg-[var(--color-accent)]/10 text-[var(--color-accent)] border-[var(--color-accent)]/20",
+  past: "bg-[var(--color-surface-2)] text-[var(--color-muted)] border-[var(--color-border)]",
+}
+---
+
+<span
+  class:list={[
+    "inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-xs font-semibold tracking-wide transition-colors",
+    statusStyles[status],
+    className
+  ]}
+>
+  <span class:list={[
+    "h-1.5 w-1.5 rounded-full",
+    status === "upcoming" && "bg-[var(--color-primary)]",
+    status === "ongoing" && "bg-[var(--color-accent)]",
+    status === "past" && "bg-[var(--color-muted)]"
+  ]}></span>
+  {label}
+</span>

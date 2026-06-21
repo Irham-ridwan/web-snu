@@ -1,0 +1,66 @@
+---
+import { SITE } from "@/config"
+
+interface Props {
+  title: string
+  description?: string
+  author?: string
+  tag?: string
+}
+
+const {
+  title,
+  description = SITE.description,
+  author = SITE.defaultAuthor,
+  tag
+} = Astro.props
+---
+
+<div
+  class="relative flex h-[630px] w-[1200px] flex-col justify-between overflow-hidden bg-gradient-to-br from-[#12161a] via-[#1a2027] to-[#14171c] p-20 text-white"
+  style="font-family: 'Inter', sans-serif;"
+>
+  <!-- Background subtle decoration -->
+  <div class="absolute -right-20 -top-20 h-96 w-96 rounded-full bg-[#bd93f9]/5 blur-3xl"></div>
+  <div class="absolute -left-20 -bottom-20 h-96 w-96 rounded-full bg-[#8be9fd]/5 blur-3xl"></div>
+
+  <!-- Header -->
+  <div class="flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-[var(--color-primary)] font-serif text-lg font-bold text-[#1a2027]">
+        SN
+      </div>
+      <div>
+        <div class="font-serif text-lg font-bold tracking-tight">Sekala Niskala</div>
+        <div class="text-[10px] uppercase tracking-[0.2em] text-[var(--color-muted)]">Portal</div>
+      </div>
+    </div>
+    
+    {tag && (
+      <span class="rounded-full border border-[var(--color-primary)]/30 bg-[var(--color-primary)]/10 px-4 py-1 text-xs font-semibold uppercase tracking-wider text-[var(--color-primary)]">
+        #{tag}
+      </span>
+    )}
+  </div>
+
+  <!-- Body -->
+  <div class="my-auto max-w-4xl space-y-6">
+    <h1 class="font-serif text-5xl font-bold leading-tight text-white drop-shadow-sm">
+      {title}
+    </h1>
+    <p class="text-xl text-[var(--color-muted)] line-clamp-3 leading-relaxed">
+      {description}
+    </p>
+  </div>
+
+  <!-- Footer -->
+  <div class="flex items-center justify-between border-t border-white/10 pt-8 text-sm">
+    <div class="flex items-center gap-2 text-[var(--color-muted)]">
+      <span>Oleh:</span>
+      <span class="font-semibold text-white">{author}</span>
+    </div>
+    <div class="text-[var(--color-muted)]">
+      snu.web.id
+    </div>
+  </div>
+</div>

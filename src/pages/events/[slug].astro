@@ -1,0 +1,27 @@
+---
+import type { GetStaticPaths } from "astro"
+import { getCollection, render } from "astro:content"
+import type { CollectionEntry } from "astro:content"
+import EventLayout from "@/layouts/EventLayout.astro"
+
+export const getStaticPaths = (async () => {
+  const all = (await getCollection("events")).filter(
+    (entry) => import.meta.env.DEV || !entry.data.draft,
+  )
+  return all.map((entry) => ({
+    params: { slug: entry.id },
+    props: { entry },
+  }))
+}) satisfies GetStaticPaths
+
+interface Props {
+  entry: CollectionEntry<"events">
+}
+
+const { entry } = Astro.props
+const { Content } = await render(entry)
+---
+
+<EventLayout entry={entry}>
+  <Content />
+</EventLayout>

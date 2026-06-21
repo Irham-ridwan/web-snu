@@ -5,6 +5,7 @@ import Hero from "@/components/Hero.astro"
 import ArticleCard from "@/components/ArticleCard.astro"
 import EmptyState from "@/components/EmptyState.astro"
 import TagBadge from "@/components/TagBadge.astro"
+import Button from "@/components/Button.astro"
 import { collectTags, sortArtikel } from "@/lib/utils"
 
 const all = sortArtikel(await getCollection("artikel"))
@@ -55,9 +56,9 @@ const bodies = Object.fromEntries(all.map((a) => [a.id, a.body ?? ""]))
     <section aria-labelledby="latest-heading">
       <div class="mb-5 flex items-baseline justify-between">
         <h2 id="latest-heading" class="font-serif text-2xl font-semibold">Tulisan Terbaru</h2>
-        <a href="/artikel" class="text-sm font-medium text-[var(--color-primary)] hover:underline">
+        <Button href="/artikel" variant="ghost" size="sm" class="text-[var(--color-primary)] hover:text-[var(--color-primary)]/80">
           Lihat semua &rarr;
-        </a>
+        </Button>
       </div>
       {
         rest.length > 0 ? (

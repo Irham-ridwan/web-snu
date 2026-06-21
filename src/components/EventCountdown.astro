@@ -1,0 +1,95 @@
+---
+interface Props {
+  startDate: Date
+  class?: string
+}
+
+const { startDate, class: className = "" } = Astro.props
+const targetIso = startDate.toISOString()
+---
+
+<div
+  class:list={[
+    "flex items-center gap-3 rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-4 sm:p-5 shadow-inner",
+    className
+  ]}
+  data-target-date={targetIso}
+  id="event-countdown-wrapper"
+>
+  <div class="flex flex-col gap-0.5">
+    <span class="text-xs uppercase tracking-widest text-[var(--color-muted)] font-medium">Mulai Dalam</span>
+    <div class="flex items-center gap-2.5 sm:gap-4 font-mono text-xl sm:text-2xl font-bold text-[var(--color-primary)]" id="countdown-timer">
+      <div class="flex flex-col items-center">
+        <span id="countdown-days">00</span>
+        <span class="text-[9px] uppercase tracking-normal font-sans font-medium text-[var(--color-muted)] mt-0.5">Hari</span>
+      </div>
+      <span class="text-[var(--color-border)] mb-4">:</span>
+      <div class="flex flex-col items-center">
+        <span id="countdown-hours">00</span>
+        <span class="text-[9px] uppercase tracking-normal font-sans font-medium text-[var(--color-muted)] mt-0.5">Jam</span>
+      </div>
+      <span class="text-[var(--color-border)] mb-4">:</span>
+      <div class="flex flex-col items-center">
+        <span id="countdown-minutes">00</span>
+        <span class="text-[9px] uppercase tracking-normal font-sans font-medium text-[var(--color-muted)] mt-0.5">Menit</span>
+      </div>
+      <span class="text-[var(--color-border)] mb-4">:</span>
+      <div class="flex flex-col items-center">
+        <span id="countdown-seconds">00</span>
+        <span class="text-[9px] uppercase tracking-normal font-sans font-medium text-[var(--color-muted)] mt-0.5">Detik</span>
+      </div>
+    </div>
+    <span class="hidden text-sm font-medium text-[var(--color-accent)] font-serif" id="countdown-active">
+      Event sedang berlangsung!
+    </span>
+  </div>
+</div>
+
+<script>
+  function initCountdown() {
+    const wrapper = document.getElementById("event-countdown-wrapper")
+    if (!wrapper) return
+
+    const targetStr = wrapper.getAttribute("data-target-date")
+    if (!targetStr) return
+
+    const targetDate = new Date(targetStr).getTime()
+    const timerEl = document.getElementById("countdown-timer")
+    const activeEl = document.getElementById("countdown-active")
+
+    const dEl = document.getElementById("countdown-days")
+    const hEl = document.getElementById("countdown-hours")
+    const mEl = document.getElementById("countdown-minutes")
+    const sEl = document.getElementById("countdown-seconds")
+
+    function update() {
+      const now = new Date().getTime()
+      const diff = targetDate - now
+
+      if (diff <= 0) {
+        if (timerEl) timerEl.classList.add("hidden")
+        if (activeEl) activeEl.classList.remove("hidden")
+        return
+      }
+
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24))
+      const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
+      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))
+      const seconds = Math.floor((diff % (1000 * 60)) / 1000)
+
+      if (dEl) dEl.textContent = String(days).padStart(2, "0")
+      if (hEl) hEl.textContent = String(hours).padStart(2, "0")
+      if (mEl) mEl.textContent = String(minutes).padStart(2, "0")
+      if (sEl) sEl.textContent = String(seconds).padStart(2, "0")
+    }
+
+    update()
+    const interval = setInterval(update, 1000)
+
+    // Clear interval when navigating away (for Astro transition support if added in the future)
+    document.addEventListener("astro:before-preparation", () => clearInterval(interval), { once: true })
+  }
+
+  // Run on page load
+  initCountdown()
+</script>

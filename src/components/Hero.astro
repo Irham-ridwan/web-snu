@@ -1,5 +1,6 @@
 ---
 import { SITE } from "@/config"
+import Button from "@/components/Button.astro"
 interface Props {
   eyebrow?: string
   title?: string
@@ -32,18 +33,12 @@ const {
       {subtitle}
     </p>
     <div class="mt-8 flex flex-wrap items-center justify-center gap-3">
-      <a
-        href="/artikel"
-        class="inline-flex items-center rounded-md bg-[var(--color-primary)] px-5 py-2.5 text-sm font-semibold text-[var(--color-primary-foreground)] transition-opacity hover:opacity-90"
-      >
+      <Button href="/artikel" variant="primary" size="md">
         Baca Artikel
-      </a>
-      <a
-        href="/tentang"
-        class="inline-flex items-center rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] px-5 py-2.5 text-sm font-semibold text-[var(--color-foreground)] transition-colors hover:bg-[var(--color-surface-2)]"
-      >
+      </Button>
+      <Button href="/tentang" variant="secondary" size="md">
         Tentang Kami
-      </a>
+      </Button>
     </div>
   </div>
 </section>

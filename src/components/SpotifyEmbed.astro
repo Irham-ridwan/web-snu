@@ -1,0 +1,31 @@
+---
+interface Props {
+  playlistId?: string
+  class?: string
+}
+
+const { playlistId = "6PDr5q3bUuJ3T977P3g5cQ", class: className = "" } = Astro.props // Preset SN Theme Songs playlist id
+---
+
+<div class:list={["w-full overflow-hidden rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-3 sm:p-4 shadow-sm", className]}>
+  <div class="mb-3 flex items-center justify-between">
+    <div class="flex items-center gap-2">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" class="text-[#1DB954]">
+        <path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm4.586 14.424c-.18.295-.563.387-.857.207-2.35-1.436-5.305-1.76-8.786-.965-.335.076-.668-.135-.744-.47-.077-.335.136-.668.47-.745 3.812-.872 7.076-.5 9.71 1.11.294.18.385.563.207.857zm1.225-2.72c-.226.367-.707.487-1.074.26-2.69-1.654-6.79-2.133-9.97-1.167-.413.125-.845-.108-.97-.52-.125-.413.108-.846.52-.97 3.636-1.102 8.147-.565 11.233 1.33.367.226.487.707.26 1.074zm.105-2.82c-3.226-1.914-8.54-2.093-11.64-1.15-.494.15-.1.865-.345.96-.493.15-.1.865-.344.96C3.963 8.307 8.736 8.1 12.35 10.244c.44.26.97.11 1.23-.33.26-.442.115-.976-.328-1.237z"></path>
+      </svg>
+      <span class="font-serif text-sm font-semibold">Sekala Niskala Theme Songs</span>
+    </div>
+    <span class="text-[10px] uppercase tracking-wider text-[var(--color-muted)]">Spotify Playlist</span>
+  </div>
+  
+  <iframe
+    style="border-radius:12px"
+    src={`https://open.spotify.com/embed/playlist/${playlistId}?utm_source=generator&theme=0`}
+    width="100%"
+    height="152"
+    frameborder="0"
+    allowfullscreen=""
+    allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+    loading="lazy"
+  ></iframe>
+</div>

@@ -1,0 +1,108 @@
+import { config, collection, fields } from "@keystatic/core"
+
+export default config({
+  storage: {
+    kind: "local",
+  },
+  collections: {
+    artikel: collection({
+      label: "Artikel",
+      path: "src/content/artikel/*",
+      format: { contentField: "content" },
+      slugField: "slug",
+      schema: {
+        title: fields.text({ label: "Judul", validation: { isRequired: true } }),
+        slug: fields.slug({ name: { label: "Slug" } }),
+        description: fields.text({ label: "Deskripsi", validation: { isRequired: true } }),
+        author: fields.text({ label: "Penulis", validation: { isRequired: true } }),
+        publishDate: fields.date({ label: "Tanggal Terbit", validation: { isRequired: true } }),
+        tags: fields.array(fields.text({ label: "Tag" }), {
+          label: "Tags",
+          itemLabel: (props) => props.value || "Tag baru",
+        }),
+        seri: fields.select({
+          label: "Seri",
+          options: [
+            { label: "Tidak Ada", value: "" },
+            { label: "Malam Mingguan (malming)", value: "malming" },
+            { label: "Seri Outbound (outbound)", value: "outbound" },
+            { label: "Arktalk (arktalk)", value: "arktalk" },
+          ],
+          defaultValue: "",
+        }),
+        featured: fields.checkbox({ label: "Disematkan (Featured)", defaultValue: false }),
+        draft: fields.checkbox({ label: "Draf", defaultValue: false }),
+        sourceUrl: fields.url({ label: "Source URL (Quora/Lainnya)" }),
+        content: fields.document({
+          label: "Konten",
+          formatting: true,
+          dividers: true,
+          links: true,
+          images: {
+            directory: "src/content/artikel/images",
+            publicPath: "./images/",
+          },
+        }),
+      },
+    }),
+    events: collection({
+      label: "Events",
+      path: "src/content/events/*",
+      format: { contentField: "content" },
+      slugField: "slug",
+      schema: {
+        title: fields.text({ label: "Judul Event", validation: { isRequired: true } }),
+        slug: fields.slug({ name: { label: "Slug" } }),
+        description: fields.text({ label: "Deskripsi Singkat", validation: { isRequired: true } }),
+        startDate: fields.date({ label: "Tanggal Mulai", validation: { isRequired: true } }),
+        endDate: fields.date({ label: "Tanggal Selesai" }),
+        location: fields.text({ label: "Lokasi", defaultValue: "Online" }),
+        draft: fields.checkbox({ label: "Draf", defaultValue: false }),
+        content: fields.document({
+          label: "Detail Event",
+          formatting: true,
+          dividers: true,
+          links: true,
+          images: {
+            directory: "src/content/events/images",
+            publicPath: "./images/",
+          },
+        }),
+      },
+    }),
+    kontributor: collection({
+      label: "Kontributor",
+      path: "src/content/kontributor/*",
+      format: { contentField: "content" },
+      slugField: "slug",
+      schema: {
+        name: fields.text({ label: "Nama Lengkap", validation: { isRequired: true } }),
+        slug: fields.slug({ name: { label: "Slug" } }),
+        role: fields.text({ label: "Peran / Bidang" }),
+        bio: fields.text({ label: "Biografi Singkat", multiline: true, validation: { isRequired: true } }),
+        avatar: fields.image({
+          label: "Foto Profil",
+          directory: "public/images/kontributor",
+          publicPath: "/images/kontributor/",
+        }),
+        order: fields.number({ label: "Urutan Tampilan", defaultValue: 99 }),
+        socials: fields.array(
+          fields.object({
+            label: fields.text({ label: "Nama Platform (e.g. Instagram)" }),
+            url: fields.url({ label: "URL Profil" }),
+          }),
+          {
+            label: "Media Sosial",
+            itemLabel: (props) => `${props.fields.label.value || "Platform"}: ${props.fields.url.value || ""}`,
+          }
+        ),
+        content: fields.document({
+          label: "Informasi Tambahan (Opsional)",
+          formatting: true,
+          dividers: true,
+          links: true,
+        }),
+      },
+    }),
+  },
+})

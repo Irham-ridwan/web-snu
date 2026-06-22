@@ -2,7 +2,7 @@ name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: [ main ] # Pastikan nama branch kamu benar (main / master)
+    branches: [ main ]
   workflow_dispatch:
 
 permissions:
@@ -16,11 +16,23 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        
+      # --- STEP BARU: Set up Node.js versi 22 ---
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
       
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+          
       - name: Install, build, and upload your site
         uses: withastro/action@v3
         with:
-          package-manager: pnpm # Karena kamu menggunakan pnpm
+          node-version: '22' # Memastikan Astro juga menggunakan Node 22
+          package-manager: pnpm
           
   deploy:
     needs: build

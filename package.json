@@ -14,6 +14,7 @@
     "clean-mdx": "node scripts/clean-mdx.js"
   },
   "dependencies": {
+    "@astrojs/cloudflare": "^12.0.0",
     "@astrojs/mdx": "^4.3.6",
     "@astrojs/react": "^4.4.0",
     "@astrojs/rss": "^4.0.12",

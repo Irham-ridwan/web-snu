@@ -2,7 +2,8 @@ import { config, collection, singleton, fields } from "@keystatic/core"
 
 export default config({
   storage: {
-    kind: process.env.NODE_ENV === "production" ? "github" : "local",
+    // MENGGUNAKAN FITUR BAWAAN ASTRO YANG COMPATIBLE DENGAN CLOUDFLARE
+    kind: import.meta.env.PROD ? "github" : "local",
     repo: {
       owner: "PaKu211",
       name: "web-snu",

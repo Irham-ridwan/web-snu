@@ -11,8 +11,8 @@ const isProd = process.env.NODE_ENV === "production"
 export default defineConfig({
   site: 'https://web-snu.pages.dev', // Sesuaikan URL Cloudflare kamu
   
-  output: 'server', // 2. Ini kunci utamanya agar Keystatic menyala!
-  adapter: cloudflare(), // 3. Mesin server-nya menggunakan Cloudflare
+  output: 'static', // Menggunakan static (SSG) agar halaman blog tetap di-render static (dan bisa diindeks Pagefind) sementara API Keystatic (SSR) tetap menyala otomatis melalui adapter
+  adapter: cloudflare(), // Mesin server-nya menggunakan Cloudflare
   prefetch: {
     prefetchAll: true,
     defaultStrategy: "hover",
@@ -21,7 +21,7 @@ export default defineConfig({
     react(),
     mdx(),
     sitemap(),
-    !isProd && keystatic()
+    keystatic()
   ].filter(Boolean),
   vite: {
     plugins: [tailwindcss()],

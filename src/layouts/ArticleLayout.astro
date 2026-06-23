@@ -10,7 +10,7 @@ import ReadingProgress from "@/components/ReadingProgress.astro"
 import TagBadge from "@/components/TagBadge.astro"
 import SeriBadge from "@/components/SeriBadge.astro"
 import WalineComments from "@/components/WalineComments.astro"
-import { buildToc, readingTime, seriLabel } from "@/lib/utils"
+import { buildToc, readingTime } from "@/lib/utils"
 import type { TocItem } from "@/lib/utils"
 import coverTemple from "@/assets/cover_temple.jpg"
 import coverMeditation from "@/assets/cover_meditation.jpg"
@@ -37,138 +37,166 @@ const finalCover = cover || fallbackCovers[entry.id.charCodeAt(0) % fallbackCove
 <BaseLayout title={title} description={description} type="article" image={cover ? undefined : "/og-default.png"}>
   <ReadingProgress />
 
-  <div class="mx-auto max-w-3xl px-4 pb-16 pt-8 sm:px-6">
-    <Breadcrumb items={[{ label: "Artikel", href: "/artikel" }, { label: title }]} />
+  <div class="mx-auto max-w-4xl px-4 pb-24 pt-12 sm:px-6 lg:px-8">
+    <!-- Breadcrumb with a fade-in delay -->
+    <div class="reveal-on-scroll">
+      <Breadcrumb items={[{ label: "Artikel", href: "/artikel" }, { label: title }]} />
+    </div>
 
-    <header class="mb-8">
-      <div class="mb-5 flex flex-wrap items-center gap-1.5">
+    <!-- Header Section -->
+    <header class="mb-12 reveal-on-scroll">
+      <!-- Pill badges for series and tags -->
+      <div class="mb-6 flex flex-wrap items-center gap-2">
         {seri && <SeriBadge seri={seri} />}
         {tags && tags.map(tag => {
-           let colorClass = "bg-neutral-800 text-neutral-300";
-           if (tag === "niskala" || tag === "lore" || tag === "history") colorClass = "bg-[#b85a3c]/15 text-[#e68a6c] border border-[#b85a3c]/25";
-           else if (tag === "sekala" || tag === "meditation" || tag === "nature") colorClass = "bg-[#1aa79b]/15 text-[#1aa79b] border border-[#1aa79b]/25";
-           else if (tag === "outbound" || tag === "space-grotesk" || tag === "astronomy") colorClass = "bg-[#385e54]/15 text-[#82b4a5] border border-[#385e54]/25";
-           else if (tag === "english-hours" || tag === "mythology") colorClass = "bg-[#d5c39a]/15 text-[#d5c39a] border border-[#d5c39a]/25";
+           let colorClass = "bg-neutral-800/60 text-neutral-300 border border-neutral-700/30";
+           if (tag === "niskala" || tag === "lore" || tag === "history") {
+             colorClass = "bg-[#b85a3c]/10 text-[#e68a6c] border border-[#b85a3c]/20";
+           } else if (tag === "sekala" || tag === "meditation" || tag === "nature") {
+             colorClass = "bg-[#1aa79b]/10 text-[#5eead4] border border-[#1aa79b]/25";
+           } else if (tag === "outbound" || tag === "space-grotesk" || tag === "astronomy") {
+             colorClass = "bg-[#385e54]/10 text-[#a7f3d0] border border-[#385e54]/25";
+           } else if (tag === "english-hours" || tag === "mythology") {
+             colorClass = "bg-[#d5c39a]/10 text-[#fde047] border border-[#d5c39a]/25";
+           }
            return (
-             <span class={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[9px] font-mono uppercase tracking-[0.1em] ${colorClass}`}>
+             <span class={`inline-flex items-center rounded-full px-3 py-1 text-[9px] font-mono uppercase tracking-[0.2em] font-medium shadow-sm transition-all duration-300 ${colorClass}`}>
                {tag}
              </span>
            )
         })}
         {draft && (
-          <span class="inline-flex items-center rounded-full bg-[var(--color-accent)]/15 px-2.5 py-0.5 text-[9px] font-mono uppercase tracking-[0.1em] text-[var(--color-accent)] border border-[var(--color-accent)]/20">
+          <span class="inline-flex items-center rounded-full bg-[var(--color-accent)]/10 px-3 py-1 text-[9px] font-mono uppercase tracking-[0.2em] font-medium text-[var(--color-accent)] border border-[var(--color-accent)]/20 shadow-sm">
             Draf
           </span>
         )}
       </div>
 
-      <h1 class="font-serif text-3xl font-medium leading-tight text-balance sm:text-4xl text-[var(--color-foreground)]">
+      <!-- High-Contrast Editorial Heading -->
+      <h1 class="font-serif text-4xl font-semibold leading-tight tracking-wide text-balance sm:text-5xl lg:text-6xl text-[var(--color-foreground)]">
         {title}
       </h1>
-      <p class="mt-4 text-base sm:text-lg leading-relaxed text-[var(--color-muted)] text-pretty">{description}</p>
+      
+      <!-- Elegant description intro -->
+      <p class="mt-6 text-lg sm:text-xl leading-relaxed text-[var(--color-muted)] text-pretty font-light italic">
+        {description}
+      </p>
 
-      <ArticleMeta author={author} publishDate={publishDate} minutes={minutes} class="mt-5" />
+      <div class="mt-8 flex items-center justify-between border-t border-[var(--color-border)]/20 pt-6">
+        <ArticleMeta author={author} publishDate={publishDate} minutes={minutes} />
+      </div>
 
-      <!-- Text Size and Font Switcher Widget Toolbar -->
-      <div class="mt-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-y border-[var(--color-border)]/20 py-3 text-xs text-[var(--color-muted)]">
-        <!-- Font family switcher -->
-        <div class="flex items-center justify-between gap-3 sm:justify-start">
-          <div class="flex items-center gap-1.5">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="text-[var(--color-primary)]">
-              <polyline points="4 7 4 4 20 4 20 7"></polyline>
-              <line x1="9" y1="20" x2="15" y2="20"></line>
-              <line x1="12" y1="4" x2="12" y2="20"></line>
-            </svg>
-            <span class="font-serif">Gaya Huruf</span>
+      <!-- Double-Bezel Control Panel (Font & Text Size) -->
+      <div class="mt-8 p-1 rounded-2xl bg-black/20 ring-1 ring-white/5 backdrop-blur-md shadow-inner">
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 px-5 py-3 rounded-[calc(1rem+0.25rem)] bg-[var(--color-surface)] ring-1 ring-white/5">
+          
+          <!-- Font family selector -->
+          <div class="flex items-center justify-between gap-3 md:justify-start">
+            <div class="flex items-center gap-2">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-[var(--color-primary)]">
+                <polyline points="4 7 4 4 20 4 20 7"></polyline>
+                <line x1="9" y1="20" x2="15" y2="20"></line>
+                <line x1="12" y1="4" x2="12" y2="20"></line>
+              </svg>
+              <span class="font-mono text-[10px] uppercase tracking-wider text-[var(--color-muted)]">Gaya Huruf</span>
+            </div>
+            <div class="flex items-center gap-1 bg-black/20 rounded-full p-0.5 border border-white/5">
+              <button 
+                type="button"
+                id="font-serif" 
+                class="h-7 px-3.5 rounded-full flex items-center justify-center text-[10px] font-medium font-serif tracking-wider transition-all duration-300 cursor-pointer active:scale-95"
+                title="Font Serif (Klasik)"
+              >
+                Serif
+              </button>
+              <button 
+                type="button"
+                id="font-sans" 
+                class="h-7 px-3.5 rounded-full flex items-center justify-center text-[10px] font-medium font-sans tracking-wider transition-all duration-300 cursor-pointer active:scale-95"
+                title="Font Sans (Modern)"
+              >
+                Sans
+              </button>
+              <button 
+                type="button"
+                id="font-mono" 
+                class="h-7 px-3.5 rounded-full flex items-center justify-center text-[10px] font-medium font-mono tracking-wider transition-all duration-300 cursor-pointer active:scale-95"
+                title="Font Mono (Kode)"
+              >
+                Mono
+              </button>
+            </div>
           </div>
-          <div class="flex items-center gap-1 bg-[var(--color-surface-2)]/60 rounded-full p-1 border border-[var(--color-border)]/40">
-            <button 
-              type="button"
-              id="font-serif" 
-              class="h-7 px-3 rounded-full flex items-center justify-center text-[10px] uppercase font-serif tracking-wider transition-all cursor-pointer"
-              title="Font Serif (Klasik)"
-            >
-              Serif
-            </button>
-            <button 
-              type="button"
-              id="font-sans" 
-              class="h-7 px-3 rounded-full flex items-center justify-center text-[10px] uppercase font-sans tracking-wider transition-all cursor-pointer"
-              title="Font Sans (Modern)"
-            >
-              Sans
-            </button>
-            <button 
-              type="button"
-              id="font-mono" 
-              class="h-7 px-3 rounded-full flex items-center justify-center text-[10px] uppercase font-mono tracking-wider transition-all cursor-pointer"
-              title="Font Mono (Kode)"
-            >
-              Mono
-            </button>
-          </div>
-        </div>
 
-        <!-- Text size changer -->
-        <div class="flex items-center justify-between gap-3 sm:justify-end">
-          <div class="flex items-center gap-1.5">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="text-[var(--color-primary)]">
-              <path d="M4 7V4h16v3M9 20h6M12 4v16"/>
-            </svg>
-            <span class="font-serif">Ukuran Teks</span>
-          </div>
-          <div class="flex items-center gap-1 bg-[var(--color-surface-2)]/60 rounded-full p-1 border border-[var(--color-border)]/40">
-            <button 
-              type="button"
-              id="text-dec" 
-              class="h-7 w-7 rounded-full flex items-center justify-center text-xs font-mono text-[var(--color-muted)] hover:text-[var(--color-foreground)] hover:bg-[var(--color-surface)] transition-all cursor-pointer"
-              title="Perkecil tulisan (A-)"
-            >
-              A-
-            </button>
-            <button 
-              type="button"
-              id="text-normal" 
-              class="h-7 px-3 rounded-full flex items-center justify-center text-[10px] uppercase font-mono tracking-wider font-semibold text-[var(--color-primary)] bg-[var(--color-surface)] border border-[var(--color-border)]/20 transition-all cursor-pointer"
-              title="Ukuran normal"
-            >
-              Normal
-            </button>
-            <button 
-              type="button"
-              id="text-inc" 
-              class="h-7 w-7 rounded-full flex items-center justify-center text-xs font-mono text-[var(--color-muted)] hover:text-[var(--color-foreground)] hover:bg-[var(--color-surface)] transition-all cursor-pointer"
-              title="Perbesar tulisan (A+)"
-            >
-              A+
-            </button>
+          <!-- Text size changer -->
+          <div class="flex items-center justify-between gap-3 md:justify-end">
+            <div class="flex items-center gap-2">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-[var(--color-primary)]">
+                <path d="M4 7V4h16v3M9 20h6M12 4v16"/>
+              </svg>
+              <span class="font-mono text-[10px] uppercase tracking-wider text-[var(--color-muted)]">Ukuran Teks</span>
+            </div>
+            <div class="flex items-center gap-1 bg-black/20 rounded-full p-0.5 border border-white/5">
+              <button 
+                type="button"
+                id="text-dec" 
+                class="h-7 w-7 rounded-full flex items-center justify-center text-xs font-mono text-[var(--color-muted)] hover:text-[var(--color-foreground)] transition-all cursor-pointer active:scale-90"
+                title="Perkecil tulisan (A-)"
+              >
+                A-
+              </button>
+              <button 
+                type="button"
+                id="text-normal" 
+                class="h-7 px-3.5 rounded-full flex items-center justify-center text-[9px] uppercase font-mono tracking-wider font-semibold text-[var(--color-primary)] hover:text-[var(--color-foreground)] transition-all cursor-pointer active:scale-95"
+                title="Ukuran normal"
+              >
+                Normal
+              </button>
+              <button 
+                type="button"
+                id="text-inc" 
+                class="h-7 w-7 rounded-full flex items-center justify-center text-xs font-mono text-[var(--color-muted)] hover:text-[var(--color-foreground)] transition-all cursor-pointer active:scale-90"
+                title="Perbesar tulisan (A+)"
+              >
+                A+
+              </button>
+            </div>
           </div>
         </div>
       </div>
     </header>
 
+    <!-- Double-Bezel Nested Cover Image Frame -->
     {
       finalCover && (
-        <Image
-          src={finalCover}
-          alt={`Ilustrasi untuk artikel ${title}`}
-          loading="eager"
-          widths={[480, 768, 1200]}
-          sizes="(min-width: 768px) 768px, 100vw"
-          class="mb-10 aspect-[21/9] w-full rounded-[var(--radius-lg)] object-cover shadow-[0_8px_24px_rgba(0,0,0,0.5)] border border-[var(--color-border)]/20"
-        />
+        <div class="mb-16 rounded-[2.5rem] bg-black/15 p-2 ring-1 ring-white/10 backdrop-blur-3xl shadow-2xl reveal-on-scroll">
+          <div class="overflow-hidden rounded-[calc(2.5rem-0.5rem)] border border-white/5 shadow-[inset_0_1px_2px_rgba(255,255,255,0.1)]">
+            <Image
+              src={finalCover}
+              alt={`Ilustrasi untuk artikel ${title}`}
+              loading="eager"
+              widths={[480, 768, 1200]}
+              sizes="(min-width: 768px) 768px, 100vw"
+              class="aspect-[21/9] w-full object-cover transition-transform duration-700 hover:scale-102"
+            />
+          </div>
+        </div>
       )
     }
 
-    <div class="lg:grid lg:grid-cols-[1fr_220px] lg:gap-10">
-      <div class="prose min-w-0">
+    <!-- Content Split Layout -->
+    <div class="lg:grid lg:grid-cols-[1fr_240px] lg:gap-14 reveal-on-scroll">
+      <!-- Main Article Content Body -->
+      <article class="prose min-w-0 max-w-none leading-relaxed tracking-wide text-justify text-[var(--color-foreground)]">
         <slot />
-      </div>
+      </article>
 
+      <!-- Sidebar Sticky TOC (machined container) -->
       {
         toc.length > 0 && (
           <aside class="hidden lg:block">
-            <div class="sticky top-24">
+            <div class="sticky top-28 rounded-2xl bg-black/10 p-4 ring-1 ring-white/5 border border-white/5">
               <TableOfContents toc={toc} />
             </div>
           </aside>
@@ -176,10 +204,11 @@ const finalCover = cover || fallbackCovers[entry.id.charCodeAt(0) % fallbackCove
       }
     </div>
 
+    <!-- Article Tag Footers -->
     {
       tags.length > 0 && (
-        <div class="mt-12 flex flex-wrap items-center gap-2 border-t border-[var(--color-border)] pt-6">
-          <span class="text-sm text-[var(--color-muted)]">Tag:</span>
+        <div class="mt-16 flex flex-wrap items-center gap-2 border-t border-[var(--color-border)]/20 pt-8 reveal-on-scroll">
+          <span class="text-xs font-mono uppercase tracking-wider text-[var(--color-muted)] mr-2">Tag Terkait:</span>
           {tags.map((tag) => (
             <TagBadge tag={tag} />
           ))}
@@ -189,19 +218,30 @@ const finalCover = cover || fallbackCovers[entry.id.charCodeAt(0) % fallbackCove
 
     {
       sourceUrl && (
-        <p class="mt-4 text-xs text-[var(--color-muted)]">
-          Tulisan ini awalnya terbit di{" "}
-          <a href={sourceUrl} class="underline hover:text-[var(--color-foreground)]" rel="noopener noreferrer" target="_blank">
-            sumber aslinya
-          </a>
-          .
-        </p>
+        <div class="mt-6 flex items-center gap-2 text-xs text-[var(--color-muted)] font-mono reveal-on-scroll">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+            <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+          </svg>
+          <span>
+            Originally published on{" "}
+            <a href={sourceUrl} class="underline hover:text-[var(--color-foreground)] transition-colors" rel="noopener noreferrer" target="_blank">
+              Quora Space
+            </a>
+          </span>
+        </div>
       )
     }
 
-    <WalineComments path={`/artikel/${entry.id}`} />
+    <!-- Premium Nested Waline Comments Section -->
+    <div class="mt-16 reveal-on-scroll">
+      <WalineComments path={`/artikel/${entry.id}`} />
+    </div>
 
-    <RelatedArticles entries={related} />
+    <!-- Related articles -->
+    <div class="reveal-on-scroll">
+      <RelatedArticles entries={related} />
+    </div>
   </div>
 
   <script>
@@ -229,10 +269,10 @@ const finalCover = cover || fallbackCovers[entry.id.charCodeAt(0) % fallbackCove
         prose.classList.add(sizeClasses[currentSizeIndex]);
 
         if (decBtn && incBtn) {
-          decBtn.style.opacity = currentSizeIndex === 0 ? '0.4' : '1';
+          decBtn.style.opacity = currentSizeIndex === 0 ? '0.3' : '1';
           decBtn.style.pointerEvents = currentSizeIndex === 0 ? 'none' : 'auto';
           
-          incBtn.style.opacity = currentSizeIndex === sizeClasses.length - 1 ? '0.4' : '1';
+          incBtn.style.opacity = currentSizeIndex === sizeClasses.length - 1 ? '0.3' : '1';
           incBtn.style.pointerEvents = currentSizeIndex === sizeClasses.length - 1 ? 'none' : 'auto';
         }
 
@@ -284,11 +324,11 @@ const finalCover = cover || fallbackCovers[entry.id.charCodeAt(0) % fallbackCove
           const btn = fontBtns[key];
           if (!btn) return;
           if (key === currentFont) {
-            btn.classList.add('text-[var(--color-primary)]', 'bg-[var(--color-surface)]', 'border', 'border-[var(--color-border)]/20');
-            btn.classList.remove('text-[var(--color-muted)]');
+            btn.classList.add('text-[var(--color-primary-foreground)]', 'bg-[var(--color-primary)]', 'shadow-inner');
+            btn.classList.remove('text-[var(--color-muted)]', 'hover:bg-white/5');
           } else {
-            btn.classList.remove('text-[var(--color-primary)]', 'bg-[var(--color-surface)]', 'border', 'border-[var(--color-border)]/20');
-            btn.classList.add('text-[var(--color-muted)]');
+            btn.classList.remove('text-[var(--color-primary-foreground)]', 'bg-[var(--color-primary)]', 'shadow-inner');
+            btn.classList.add('text-[var(--color-muted)]', 'hover:bg-white/5');
           }
         });
 

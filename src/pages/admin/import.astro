@@ -1,0 +1,189 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro"
+---
+
+<BaseLayout title="Pengimpor Artikel Quora" description="Impor artikel dari URL Quora secara instan untuk diedit di Keystatic CMS.">
+  <div class="relative min-h-[85vh] flex items-center justify-center py-20 px-4">
+    <!-- Volumetric glow specific to this page -->
+    <div class="pointer-events-none absolute inset-0 -z-10 flex items-center justify-center">
+      <div class="h-[400px] w-[400px] rounded-full bg-[var(--color-primary)]/10 blur-[100px] animate-pulse duration-[6000ms]"></div>
+    </div>
+
+    <!-- Double-Bezel Nested Shell -->
+    <div class="w-full max-w-xl rounded-[2.5rem] bg-black/10 p-2 ring-1 ring-white/10 backdrop-blur-3xl reveal-on-scroll">
+      <div class="rounded-[2.2rem] bg-[var(--color-surface)] p-8 sm:p-12 ring-1 ring-white/5 shadow-2xl relative overflow-hidden">
+        <!-- Background noise pattern -->
+        <div class="absolute inset-0 bg-noise opacity-[0.02] pointer-events-none"></div>
+
+        <div class="relative z-10">
+          <!-- Eyebrow badge -->
+          <div class="mb-6 flex justify-center">
+            <span class="inline-flex items-center rounded-full bg-[var(--color-accent)]/10 px-4 py-1.5 text-[9px] font-mono font-medium uppercase tracking-[0.25em] text-[var(--color-accent)] border border-[var(--color-accent)]/20 shadow-sm">
+              Keystatic Integrasi
+            </span>
+          </div>
+
+          <h1 class="font-serif text-3xl sm:text-4xl font-semibold text-center leading-tight tracking-wide text-balance text-[var(--color-foreground)]">
+            Pengimpor Quora
+          </h1>
+          <p class="mt-3 text-center text-xs leading-relaxed text-[var(--color-muted)] max-w-sm mx-auto">
+            Tempel tautan artikel tunggal dari Quora Space Anda untuk menyalin konten dan menyimpannya secara otomatis ke situs lokal.
+          </p>
+
+          <form id="import-form" class="mt-10 space-y-6">
+            <div class="space-y-2">
+              <label for="quora-url" class="block text-[10px] font-mono uppercase tracking-wider text-[var(--color-muted)] pl-2">
+                URL Postingan Quora
+              </label>
+              <!-- Double-Bezel Input Field -->
+              <div class="rounded-[1.5rem] bg-black/25 p-1 ring-1 ring-white/5 transition-all focus-within:ring-[var(--color-accent)]/40 duration-300">
+                <input
+                  type="url"
+                  id="quora-url"
+                  placeholder="https://sekalaniskalauniverse.quora.com/Judul-Postingan..."
+                  required
+                  class="w-full bg-transparent px-4 py-3.5 text-sm rounded-[1.2rem] text-[var(--color-foreground)] placeholder-[var(--color-muted)]/50 focus:outline-none font-sans"
+                />
+              </div>
+            </div>
+
+            <!-- CTA button with morphing/kinetic hover state -->
+            <button
+              type="submit"
+              id="submit-btn"
+              class="w-full group relative rounded-full bg-[var(--color-primary)] hover:bg-[var(--color-primary)]/90 text-[var(--color-primary-foreground)] font-mono text-[11px] font-semibold uppercase tracking-[0.2em] py-4 px-6 transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] active:scale-[0.98] cursor-pointer shadow-lg flex items-center justify-center gap-2 overflow-hidden"
+            >
+              <span id="btn-text">Mulai Impor</span>
+              <span id="btn-icon" class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-[var(--color-primary-foreground)]/10 transition-transform duration-500 group-hover:translate-x-1 group-hover:-translate-y-[1px]">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+              </span>
+            </button>
+          </form>
+
+          <!-- Status & Feedback Panel -->
+          <div id="status-panel" class="mt-8 hidden rounded-2xl bg-black/25 p-5 ring-1 ring-white/5 border border-white/5 transition-all duration-500">
+            <div id="loader" class="flex flex-col items-center space-y-4">
+              <!-- Volumetric spinner -->
+              <div class="relative w-10 h-10">
+                <div class="absolute inset-0 rounded-full border-[3px] border-white/10"></div>
+                <div class="absolute inset-0 rounded-full border-[3px] border-[var(--color-accent)] border-t-transparent animate-spin"></div>
+              </div>
+              <p class="text-xs text-[var(--color-muted)] font-mono animate-pulse">Menghubungkan virtual browser & mengunduh artikel...</p>
+            </div>
+
+            <div id="response-content" class="hidden text-center space-y-4">
+              <div id="success-icon" class="hidden mx-auto w-12 h-12 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+              </div>
+              <div id="error-icon" class="hidden mx-auto w-12 h-12 rounded-full bg-rose-500/10 border border-rose-500/20 flex items-center justify-center text-rose-400">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+              </div>
+
+              <h3 id="response-title" class="font-serif text-lg font-medium text-[var(--color-foreground)]"></h3>
+              <p id="response-msg" class="text-xs text-[var(--color-muted)] max-w-xs mx-auto leading-relaxed"></p>
+
+              <div id="actions" class="pt-4 flex flex-col gap-2">
+                <a
+                  id="editor-link"
+                  href="#"
+                  target="_blank"
+                  class="inline-flex items-center justify-center rounded-full bg-[var(--color-accent)] text-[var(--color-accent-foreground)] font-mono text-[10px] font-semibold uppercase tracking-wider py-3 px-6 transition-all hover:opacity-90 active:scale-[0.98]"
+                >
+                  Edit di Keystatic CMS
+                </a>
+                <button
+                  type="button"
+                  id="reset-btn"
+                  class="inline-flex items-center justify-center rounded-full bg-neutral-800 hover:bg-neutral-700 text-neutral-300 font-mono text-[10px] font-semibold uppercase tracking-wider py-3 px-6 transition-all active:scale-[0.98] cursor-pointer"
+                >
+                  Impor Artikel Lain
+                </button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const form = document.getElementById("import-form") as HTMLFormElement
+    const input = document.getElementById("quora-url") as HTMLInputElement
+    const submitBtn = document.getElementById("submit-btn") as HTMLButtonElement
+    const statusPanel = document.getElementById("status-panel") as HTMLDivElement
+    const loader = document.getElementById("loader") as HTMLDivElement
+    const responseContent = document.getElementById("response-content") as HTMLDivElement
+    const successIcon = document.getElementById("success-icon") as HTMLDivElement
+    const errorIcon = document.getElementById("error-icon") as HTMLDivElement
+    const responseTitle = document.getElementById("response-title") as HTMLHeadingElement
+    const responseMsg = document.getElementById("response-msg") as HTMLParagraphElement
+    const editorLink = document.getElementById("editor-link") as HTMLAnchorElement
+    const resetBtn = document.getElementById("reset-btn") as HTMLButtonElement
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault()
+      const url = input.value.trim()
+      if (!url) return
+
+      // UI Transition
+      submitBtn.disabled = true
+      submitBtn.style.opacity = "0.5"
+      statusPanel.classList.remove("hidden")
+      loader.classList.remove("hidden")
+      responseContent.classList.add("hidden")
+
+      try {
+        const response = await fetch("/api/import-quora", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ url })
+        })
+
+        const result = await response.json()
+
+        loader.classList.add("hidden")
+        responseContent.classList.remove("hidden")
+
+        if (result.success) {
+          successIcon.classList.remove("hidden")
+          errorIcon.classList.add("hidden")
+          responseTitle.textContent = "Impor Berhasil!"
+          responseMsg.textContent = `Artikel "${result.title}" berhasil diunduh dan disimpan ke situs Anda secara lokal.`;
+          editorLink.href = `/keystatic/collection/artikel/item/${result.slug}`
+          editorLink.classList.remove("hidden")
+        } else {
+          successIcon.classList.add("hidden")
+          errorIcon.classList.remove("hidden")
+          responseTitle.textContent = "Impor Gagal"
+          responseMsg.textContent = result.error || "Gagal menyalin konten postingan."
+          editorLink.classList.add("hidden")
+        }
+      } catch (err: any) {
+        loader.classList.add("hidden")
+        responseContent.classList.remove("hidden")
+        successIcon.classList.add("hidden")
+        errorIcon.classList.remove("hidden")
+        responseTitle.textContent = "Koneksi Bermasalah"
+        responseMsg.textContent = err.message || "Gagal menghubungi server untuk melakukan pengimporan."
+        editorLink.classList.add("hidden")
+      }
+    })
+
+    resetBtn.addEventListener("click", () => {
+      input.value = ""
+      submitBtn.disabled = false
+      submitBtn.style.opacity = "1"
+      statusPanel.classList.add("hidden")
+    })
+  </script>
+</BaseLayout>

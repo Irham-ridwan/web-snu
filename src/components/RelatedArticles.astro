@@ -10,25 +10,37 @@ const { entries } = Astro.props
 
 {
   entries.length > 0 && (
-    <section class="mt-16 border-t border-[var(--color-border)] pt-10" aria-labelledby="related-heading">
-      <h2 id="related-heading" class="font-serif text-xl font-semibold">
+    <section class="mt-20 border-t border-[var(--color-border)]/20 pt-12" aria-labelledby="related-heading">
+      <h2 id="related-heading" class="font-serif text-2xl font-medium tracking-wide text-[var(--color-foreground)]">
         Bacaan Terkait
       </h2>
-      <div class="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
+      <div class="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-3">
         {entries.map((entry) => (
           <a
             href={`/artikel/${entry.id}`}
-            class="group flex flex-col gap-2 rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-surface)] p-4 transition-colors hover:border-[var(--color-primary)]/60"
+            class="group flex flex-col rounded-3xl bg-black/15 p-1.5 ring-1 ring-white/5 backdrop-blur-sm transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] hover:ring-white/10 hover:shadow-2xl active:scale-[0.99]"
           >
-            <h3 class="font-serif text-base font-semibold leading-snug transition-colors group-hover:text-[var(--color-primary)]">
-              {entry.data.title}
-            </h3>
-            <time
-              datetime={entry.data.publishDate.toISOString()}
-              class="mt-auto text-xs text-[var(--color-muted)]"
-            >
-              {formatDate(entry.data.publishDate)}
-            </time>
+            <!-- Inner Bezel Core -->
+            <div class="flex-1 flex flex-col gap-3 p-5 rounded-[calc(1.5rem-0.125rem)] bg-[var(--color-surface)] ring-1 ring-white/5 group-hover:bg-[var(--color-surface-2)]/30 transition-colors duration-500">
+              
+              <h3 class="font-serif text-base font-medium leading-snug text-[var(--color-foreground)] transition-colors duration-500 group-hover:text-[var(--color-primary)] flex items-start justify-between gap-2">
+                <span>{entry.data.title}</span>
+                <!-- Nested arrow button-in-button concept -->
+                <span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-white/5 text-[var(--color-muted)] transition-all duration-500 group-hover:bg-[var(--color-primary)] group-hover:text-[var(--color-primary-foreground)] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 shrink-0 shadow-sm">
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="7" y1="17" x2="17" y2="7"></line>
+                    <polyline points="7 7 17 7 17 17"></polyline>
+                  </svg>
+                </span>
+              </h3>
+              
+              <time
+                datetime={entry.data.publishDate.toISOString()}
+                class="mt-auto font-mono text-[10px] uppercase tracking-wider text-[var(--color-muted)]"
+              >
+                {formatDate(entry.data.publishDate)}
+              </time>
+            </div>
           </a>
         ))}
       </div>

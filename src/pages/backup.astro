@@ -1,0 +1,237 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro"
+import { getCollection } from "astro:content"
+
+// Ambil seluruh artikel dari konten koleksi Astro
+const allArticles = await getCollection("artikel")
+
+// Format data artikel secara ringkas untuk diproses client-side
+const articlesData = allArticles.map(entry => ({
+  id: entry.id,
+  title: entry.data.title,
+  description: entry.data.description || "",
+  publishDate: entry.data.publishDate,
+  author: entry.data.author,
+  sourceUrl: entry.data.sourceUrl || "",
+  cover: entry.data.cover || "",
+  bodyBase64: Buffer.from(entry.body || "").toString("base64")
+}))
+---
+
+<BaseLayout title="Pencadangan Data Artikel" description="Ekspor seluruh artikel Sekala Niskala Universe sebagai arsip Markdown (.md) dalam satu berkas ZIP.">
+  <div class="relative mx-auto max-w-3xl px-4 py-24 sm:px-6 lg:px-8 text-center min-h-[80vh] flex flex-col justify-center">
+    
+    <!-- Decorative cosmic background elements -->
+    <div class="absolute -top-12 left-1/2 -translate-x-1/2 w-96 h-96 bg-[var(--color-primary)]/10 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="absolute -bottom-12 left-1/2 -translate-x-1/2 w-[30rem] h-[30rem] bg-[var(--color-accent)]/5 rounded-full blur-3xl pointer-events-none"></div>
+
+    <div class="relative reveal-on-scroll">
+      <!-- Minimalist Header -->
+      <span class="inline-flex items-center rounded-full bg-[var(--color-primary)]/10 border border-[var(--color-primary)]/20 px-3.5 py-1 text-[10px] font-mono uppercase tracking-[0.2em] font-semibold text-[var(--color-primary)] mb-6 shadow-sm">
+        Sistem Arsip & Backup
+      </span>
+      <h1 class="font-serif text-4xl font-semibold leading-tight tracking-wide text-[var(--color-foreground)] sm:text-5xl">
+        Ekspor Semua Artikel
+      </h1>
+      <p class="mt-4 mx-auto max-w-xl text-sm leading-relaxed text-[var(--color-muted)] font-light">
+        Unduh seluruh tulisan <strong class="text-[var(--color-foreground)]">Sekala Niskala Universe</strong> ke dalam satu berkas terkompresi (.ZIP) yang berisi file format Markdown (.MD) lengkap dengan frontmatter aslinya.
+      </p>
+    </div>
+
+    <!-- Machine-like Bento Control Card -->
+    <div class="mt-12 p-1.5 rounded-[2rem] bg-black/20 ring-1 ring-white/5 backdrop-blur-md shadow-2xl reveal-on-scroll max-w-md mx-auto w-full">
+      <div class="p-8 rounded-[calc(2rem-0.375rem)] bg-[var(--color-surface)] ring-1 ring-white/5 flex flex-col items-center gap-6">
+        
+        <!-- Icon/Visual State indicator -->
+        <div class="h-20 w-20 rounded-2xl bg-black/30 border border-white/5 flex items-center justify-center relative overflow-hidden group shadow-inner">
+          <!-- Animated pulse glow -->
+          <div class="absolute inset-0 bg-[var(--color-primary)]/10 opacity-50 blur-md group-hover:scale-110 transition-transform duration-500"></div>
+          <svg id="status-icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="text-[var(--color-primary)] relative z-10 transition-transform duration-500 group-hover:scale-105">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="7 10 12 15 17 10"></polyline>
+            <line x1="12" y1="15" x2="12" y2="3"></line>
+          </svg>
+        </div>
+
+        <div class="space-y-1.5 text-center">
+          <div id="status-text" class="text-sm font-mono uppercase tracking-wider text-[var(--color-muted)] font-medium">Siap untuk Pencadangan</div>
+          <div id="stats-subtext" class="text-xs text-[var(--color-muted)]/60 font-light">Total {articlesData.length} berkas artikel siap dikemas</div>
+        </div>
+
+        <!-- Progress bar (hidden initially) -->
+        <div id="progress-container" class="w-full hidden space-y-2">
+          <div class="flex items-center justify-between text-[10px] font-mono text-[var(--color-muted)] uppercase tracking-wider">
+            <span>Mengompresi Berkas</span>
+            <span id="progress-percent">0%</span>
+          </div>
+          <div class="w-full h-1 bg-black/40 rounded-full overflow-hidden border border-white/5">
+            <div id="progress-bar" class="h-full bg-[var(--color-primary)] w-0 transition-all duration-300 shadow-[0_0_12px_var(--color-primary)]"></div>
+          </div>
+        </div>
+
+        <!-- Trigger Button with glowing hover -->
+        <button 
+          type="button"
+          id="btn-backup-trigger"
+          class="w-full h-12 rounded-xl flex items-center justify-center text-xs font-mono uppercase tracking-[0.15em] font-semibold bg-[var(--color-primary)] text-[var(--color-primary-foreground)] hover:bg-[var(--color-primary-hover)] shadow-lg hover:shadow-[0_0_24px_rgba(26,167,155,0.4)] active:scale-98 transition-all duration-300 cursor-pointer"
+        >
+          Mulai Ekspor (.ZIP)
+        </button>
+
+      </div>
+    </div>
+
+    <!-- Back to articles link -->
+    <a href="/artikel" class="mt-8 text-xs font-mono uppercase tracking-wider text-[var(--color-muted)] hover:text-[var(--color-foreground)] transition-colors duration-300 inline-block reveal-on-scroll">
+      &larr; Kembali ke daftar artikel
+    </a>
+
+  </div>
+
+  <!-- Inject JSON data and JSZip Library dynamically -->
+  <script is:inline define:vars={{ articlesData }}></script>
+  
+  <script>
+    // Membawa data ke variabel window agar bisa diakses oleh scripts
+    const articles = (window as any).articlesData || [];
+
+    async function loadJSZip(): Promise<any> {
+      if ((window as any).JSZip) return (window as any).JSZip;
+      
+      return new Promise((resolve, reject) => {
+        const script = document.createElement("script");
+        script.src = "https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js";
+        script.onload = () => resolve((window as any).JSZip);
+        script.onerror = () => reject(new Error("Gagal memuat pustaka JSZip. Periksa koneksi internet Anda."));
+        document.head.appendChild(script);
+      });
+    }
+
+    function initBackup() {
+      const btn = document.getElementById("btn-backup-trigger");
+      const statusIcon = document.getElementById("status-icon");
+      const statusText = document.getElementById("status-text");
+      const statsSubtext = document.getElementById("stats-subtext");
+      const progressContainer = document.getElementById("progress-container");
+      const progressBar = document.getElementById("progress-bar");
+      const progressPercent = document.getElementById("progress-percent");
+
+      if (!btn) return;
+
+      btn.addEventListener("click", async () => {
+        btn.setAttribute("disabled", "true");
+        btn.style.opacity = "0.5";
+        btn.style.pointerEvents = "none";
+        btn.textContent = "Sedang Memproses...";
+
+        if (statusText) statusText.textContent = "Memuat modul kompresi...";
+        if (progressContainer) progressContainer.classList.remove("hidden");
+
+        try {
+          // 1. Load JSZip dari CDN secara dinamis
+          const JSZip = await loadJSZip();
+          const zip = new JSZip();
+          const folder = zip.folder("sekala-niskala-backup");
+
+          if (statusText) statusText.textContent = "Mengemas semua artikel...";
+
+          const total = articles.length;
+
+          // 2. Tambahkan setiap berkas MDX ke dalam folder ZIP
+          for (let i = 0; i < total; i++) {
+            const art = articles[i];
+            
+            // Simpan progress
+            const percent = Math.round(((i + 1) / total) * 80); // 80% untuk pengemasan berkas
+            if (progressBar) progressBar.style.width = `${percent}%`;
+            if (progressPercent) progressPercent.textContent = `${percent}%`;
+            if (statsSubtext) statsSubtext.textContent = `Mengemas berkas ke-${i + 1} dari ${total}`;
+
+            // Decode body
+            let rawBody = "";
+            try {
+              rawBody = decodeURIComponent(escape(window.atob(art.bodyBase64)));
+            } catch (e) {
+              rawBody = window.atob(art.bodyBase64);
+            }
+
+            // Konstruksi frontmatter berkas MD
+            const fileContent = `---
+title: "${art.title.replace(/"/g, '\\"')}"
+description: "${art.description.replace(/"/g, '\\"')}"
+publishDate: "${art.publishDate}"
+author: "${art.author}"
+tags: ["quora-backup"]
+${art.sourceUrl ? `sourceUrl: "${art.sourceUrl}"\n` : ""}${art.cover ? `cover: "${art.cover}"\n` : ""}---
+
+${rawBody}
+`;
+
+            folder.file(`${art.id}.md`, fileContent);
+            
+            // Jeda microtask untuk animasi progress bar yang halus
+            await new Promise(resolve => setTimeout(resolve, 5));
+          }
+
+          if (statusText) statusText.textContent = "Membuat berkas arsip...";
+          if (statsSubtext) statsSubtext.textContent = "Menghasilkan kompresi ZIP tingkat tinggi...";
+
+          // 3. Generate berkas ZIP
+          const zipBlob = await zip.generateAsync({ type: "blob" }, (metadata) => {
+            const percent = 80 + Math.round(metadata.percent * 0.2); // 20% sisa untuk kompresi ZIP
+            if (progressBar) progressBar.style.width = `${percent}%`;
+            if (progressPercent) progressPercent.textContent = `${percent}%`;
+          });
+
+          // Update UI Sukses
+          if (progressBar) progressBar.style.width = "100%";
+          if (progressPercent) progressPercent.textContent = "100%";
+          if (statusText) {
+            statusText.textContent = "Pencadangan Selesai!";
+            statusText.classList.remove("text-[var(--color-muted)]");
+            statusText.classList.add("text-[var(--color-primary)]");
+          }
+          if (statsSubtext) statsSubtext.textContent = "Berkas ZIP berhasil diunduh ke komputer Anda.";
+          
+          if (statusIcon) {
+            statusIcon.innerHTML = `
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="text-[var(--color-primary)]">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+              </svg>
+            `;
+          }
+
+          // 4. Picu unduhan berkas
+          const dateStr = new Date().toISOString().split("T")[0];
+          const downloadUrl = URL.createObjectURL(zipBlob);
+          const a = document.createElement("a");
+          a.href = downloadUrl;
+          a.download = `backup-sekala-niskala-${dateStr}.zip`;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(downloadUrl);
+
+          btn.textContent = "Ekspor Ulang (.ZIP)";
+          btn.removeAttribute("disabled");
+          btn.style.opacity = "1";
+          btn.style.pointerEvents = "auto";
+
+        } catch (err: any) {
+          console.error("Gagal melakukan backup ZIP:", err);
+          if (statusText) statusText.textContent = "Ekspor Gagal!";
+          if (statsSubtext) statsSubtext.textContent = err.message || "Terjadi kesalahan internal.";
+          btn.textContent = "Coba Lagi";
+          btn.removeAttribute("disabled");
+          btn.style.opacity = "1";
+          btn.style.pointerEvents = "auto";
+        }
+      });
+    }
+
+    // Inisialisasi
+    initBackup();
+    document.addEventListener("astro:after-swap", initBackup);
+  </script>
+</BaseLayout>

@@ -159,6 +159,37 @@ const finalCover = cover
               </button>
             </div>
           </div>
+
+          <!-- Export backup control group -->
+          <div class="flex items-center justify-between gap-3 md:justify-end">
+            <div class="flex items-center gap-2">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-[var(--color-primary)]">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+              </svg>
+              <span class="font-mono text-[10px] uppercase tracking-wider text-[var(--color-muted)]">Backup</span>
+            </div>
+            <div class="flex items-center bg-black/20 rounded-full p-0.5 border border-white/5">
+              <button 
+                type="button"
+                id="export-md" 
+                class="h-7 px-3.5 rounded-full flex items-center justify-center text-[10px] font-medium font-mono tracking-wider text-[var(--color-muted)] hover:text-[var(--color-foreground)] transition-all duration-300 cursor-pointer active:scale-95"
+                title="Unduh artikel sebagai Markdown (.md)"
+                data-filename={`${entry.id}.md`}
+                data-title={title}
+                data-desc={description}
+                data-date={publishDate}
+                data-author={author}
+                data-source={sourceUrl || ''}
+                data-cover={cover || ''}
+                data-body-base64={Buffer.from(rawBody).toString('base64')}
+              >
+                Unduh .MD
+              </button>
+            </div>
+          </div>
+
         </div>
       </div>
     </header>
@@ -347,6 +378,50 @@ const finalCover = cover
       }
 
       updateFont();
+
+      // --- EXPORT ARTICLE BACKUP ---
+      const exportBtn = document.getElementById('export-md');
+      if (exportBtn) {
+        exportBtn.addEventListener('click', () => {
+          const filename = exportBtn.getAttribute('data-filename');
+          const title = exportBtn.getAttribute('data-title');
+          const desc = exportBtn.getAttribute('data-desc');
+          const date = exportBtn.getAttribute('data-date');
+          const author = exportBtn.getAttribute('data-author');
+          const source = exportBtn.getAttribute('data-source');
+          const cover = exportBtn.getAttribute('data-cover');
+          const bodyBase64 = exportBtn.getAttribute('data-body-base64');
+          
+          try {
+            // Decode raw content dari Base64 secara aman dengan dukungan UTF-8
+            const rawBody = decodeURIComponent(escape(window.atob(bodyBase64)));
+            
+            const frontmatter = `---
+title: "${title.replace(/"/g, '\\"')}"
+description: "${desc.replace(/"/g, '\\"')}"
+publishDate: "${date}"
+author: "${author}"
+tags: ["quora-backup"]
+${source ? `sourceUrl: "${source}"\n` : ''}${cover ? `cover: "${cover}"\n` : ''}---
+
+`;
+            const fullContent = frontmatter + rawBody;
+            const blob = new Blob([fullContent], { type: 'text/markdown;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+          } catch (e) {
+            console.error('Gagal mengekspor artikel:', e);
+            alert('Gagal mengekspor artikel.');
+          }
+        });
+      }
     }
 
     // Load initial controls state

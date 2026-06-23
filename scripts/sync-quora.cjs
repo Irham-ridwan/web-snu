@@ -6,7 +6,7 @@ puppeteer.use(StealthPlugin());
 
 // Simple slugify helper
 function slugify(text) {
-  return text
+  const s = text
     .toString()
     .toLowerCase()
     .trim()
@@ -15,6 +15,7 @@ function slugify(text) {
     .replace(/\-\-+/g, '-')
     .replace(/^-+/, '')
     .replace(/-+$/, '');
+  return s.slice(0, 80).replace(/-+$/, '');
 }
 
 // Simple HTML to plain text cleaner for description
@@ -103,51 +104,103 @@ async function run() {
     // Set custom user agent to look like a real browser
     await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36');
     
-    const spaceUrl = 'https://sekalaniskalauniverse.quora.com/';
-    console.log(`Membuka halaman Quora Space: ${spaceUrl}...`);
-    
-    try {
-      await page.goto(spaceUrl, { waitUntil: 'networkidle2', timeout: 35000 });
-    } catch (e) {
-      console.log('Menunggu halaman selesai dimuat...');
+    // Load saved cookies if they exist to bypass login wall and load older posts
+    const cookiePath = path.join(__dirname, 'quora_cookies.json');
+    if (fs.existsSync(cookiePath)) {
+      console.log('Memuat cookies sesi dari scripts/quora_cookies.json...');
+      const cookiesString = fs.readFileSync(cookiePath, 'utf8');
+      const cookies = JSON.parse(cookiesString);
+      await page.setCookie(...cookies);
+      console.log('Cookies sesi berhasil diterapkan ke browser.');
+    } else {
+      console.log('PENTING: scripts/quora_cookies.json tidak ditemukan. Sinkronisasi berjalan tanpa sesi login.');
     }
     
-    // Wait an extra 5 seconds to ensure client-side React feed renders
-    await new Promise(resolve => setTimeout(resolve, 5000));
-
-    const pageTitle = await page.title();
-    const bodyText = await page.evaluate(() => document.body.innerText);
-    console.log(`Halaman dimuat dengan judul: "${pageTitle}" (Panjang Teks: ${bodyText.length})`);
+    const spaces = [
+      { url: 'https://sekalaniskalauniverse.quora.com/', base: 'sekalaniskalauniverse.quora.com/' },
+      { url: 'https://waroengpodjokmangkoes.quora.com/', base: 'waroengpodjokmangkoes.quora.com/' }
+    ];
     
-    if (bodyText.includes('Cloudflare') || pageTitle.includes('Cloudflare') || pageTitle.includes('Attention Required')) {
-      console.log('PERINGATAN: Diduga terblokir oleh proteksi Cloudflare.');
-    }
-
-    // Extract post links from the page
-    const postUrls = await page.evaluate(() => {
-      const links = Array.from(document.querySelectorAll('a'));
-      const baseSpaceUrl = 'sekalaniskalauniverse.quora.com/';
+    let allUniqueUrls = [];
+    
+    for (const space of spaces) {
+      console.log(`\n===============================================`);
+      console.log(`Membuka halaman Quora Space: ${space.url}...`);
+      try {
+        await page.goto(space.url, { waitUntil: 'networkidle2', timeout: 35000 });
+      } catch (e) {
+        console.log('Menunggu halaman selesai dimuat...');
+      }
       
-      return links
-        .map(a => a.href)
-        .filter(href => {
-          if (!href) return false;
-          // Clean up url by removing query parameters
-          const cleanUrl = href.split('?')[0];
-          return cleanUrl.includes(baseSpaceUrl) && 
-                 !cleanUrl.includes('/about') && 
-                 !cleanUrl.includes('/followers') &&
-                 !cleanUrl.includes('/submissions') &&
-                 !cleanUrl.includes('/log') &&
-                 !cleanUrl.includes('/comment/') &&
-                 cleanUrl !== 'https://sekalaniskalauniverse.quora.com/';
-        })
-        .map(href => href.split('?')[0]); // return clean URLs
-    });
+      // Wait an extra 5 seconds to ensure client-side React feed renders
+      await new Promise(resolve => setTimeout(resolve, 5000));
 
-    // Deduplicate and sync the latest 12 articles
-    const uniqueUrls = [...new Set(postUrls)].slice(0, 12);
-    console.log(`Menemukan ${uniqueUrls.length} tautan artikel unik.`);
+      const pageTitle = await page.title();
+      const bodyText = await page.evaluate(() => document.body.innerText);
+      console.log(`Halaman dimuat dengan judul: "${pageTitle}" (Panjang Teks: ${bodyText.length})`);
+      
+      if (bodyText.includes('Cloudflare') || pageTitle.includes('Cloudflare') || pageTitle.includes('Attention Required')) {
+        console.log('PERINGATAN: Diduga terblokir oleh proteksi Cloudflare.');
+      }
+
+      // Gulir halaman untuk memuat postingan lama (Infinite Scroll)
+      console.log(`Menggulir (scrolling) halaman ${space.url} untuk memuat seluruh tulisan lama...`);
+      let previousUrlCount = 0;
+      let noNewUrlsCount = 0;
+      let uniqueUrls = [];
+      
+      // Kita lakukan scroll maksimal 150 kali untuk memuat seluruh postingan historis
+      for (let i = 0; i < 150; i++) {
+        await page.evaluate(() => {
+          window.scrollBy(0, window.innerHeight * 2);
+        });
+        // Beri jeda agar Quora memuat konten baru via Virtual DOM
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        
+        const currentUrls = await page.evaluate((baseDomain) => {
+          const links = Array.from(document.querySelectorAll('a'));
+          return links
+            .map(a => a.href)
+            .filter(href => {
+              if (!href) return false;
+              const cleanUrl = href.split('?')[0];
+              return cleanUrl.includes(baseDomain) && 
+                     !cleanUrl.includes('/about') && 
+                     !cleanUrl.includes('/followers') &&
+                     !cleanUrl.includes('/submissions') &&
+                     !cleanUrl.includes('/log') &&
+                     !cleanUrl.includes('/comment/') &&
+                     cleanUrl !== 'https://' + baseDomain &&
+                     cleanUrl !== 'http://' + baseDomain &&
+                     cleanUrl !== 'https://' + baseDomain + '/' &&
+                     cleanUrl !== 'http://' + baseDomain + '/';
+            })
+            .map(href => href.split('?')[0]);
+        }, space.base);
+        
+        uniqueUrls = [...new Set(currentUrls)];
+        console.log(`Guliran #${i + 1}: Menemukan ${uniqueUrls.length} artikel unik.`);
+        
+        if (uniqueUrls.length === previousUrlCount) {
+          noNewUrlsCount++;
+          // Jika dalam 10 kali scroll berturut-turut jumlah URL tidak bertambah, berarti sudah mencapai ujung halaman secara mutlak
+          if (noNewUrlsCount >= 10) {
+            console.log('Jumlah postingan tidak bertambah lagi setelah 10 kali scroll. Menghentikan scrolling.');
+            break;
+          }
+        } else {
+          noNewUrlsCount = 0;
+        }
+        previousUrlCount = uniqueUrls.length;
+      }
+      
+      allUniqueUrls.push(...uniqueUrls);
+    }
+    
+    const uniqueUrls = [...new Set(allUniqueUrls)];
+    console.log(`\n===============================================`);
+    console.log(`Total seluruh artikel unik dari semua Space yang disinkronisasikan: ${uniqueUrls.length}`);
+    console.log(`===============================================\n`);
 
     const articlesDir = path.join(__dirname, '../src/content/artikel');
     const publicImagesDir = path.join(__dirname, '../public/images/artikel');
@@ -161,18 +214,35 @@ async function run() {
       console.log(`\n-----------------------------------------------`);
       console.log(`Memproses artikel: ${postUrl}...`);
       
-      const newPage = await browser.newPage();
-      if (apiKey) {
-        await newPage.authenticate({
-          username: apiKey,
-          password: ''
-        });
-      }
-      await newPage.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36');
+      let success = false;
+      let attempts = 0;
+      const maxAttempts = 3;
       
-      try {
-        await newPage.goto(postUrl, { waitUntil: 'domcontentloaded', timeout: 25000 });
-        await newPage.waitForSelector('.qu-userSelect--text, article', { timeout: 15000 });
+      while (!success && attempts < maxAttempts) {
+        attempts++;
+        if (attempts > 1) {
+          console.log(`[Percobaan #${attempts}] Mencoba ulang ${postUrl}...`);
+          await new Promise(resolve => setTimeout(resolve, 3000));
+        }
+        
+        const newPage = await browser.newPage();
+        if (apiKey) {
+          await newPage.authenticate({
+            username: apiKey,
+            password: ''
+          });
+        }
+        await newPage.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36');
+        
+        if (fs.existsSync(cookiePath)) {
+          const cookiesString = fs.readFileSync(cookiePath, 'utf8');
+          const cookies = JSON.parse(cookiesString);
+          await newPage.setCookie(...cookies);
+        }
+        
+        try {
+          await newPage.goto(postUrl, { waitUntil: 'domcontentloaded', timeout: 30000 });
+          await newPage.waitForSelector('.qu-userSelect--text, article', { timeout: 20000 });
         
         // Retrieve and clean document title for reliable, non-obfuscated post title
         let rawTitle = await newPage.title();
@@ -303,8 +373,7 @@ async function run() {
         });
 
         if (!postData || !postData.markdown) {
-          console.log(`[Terlewati] Gagal mengekstrak konten atau markdown kosong.`);
-          continue;
+          throw new Error("Gagal mengekstrak konten atau markdown kosong.");
         }
 
         // Fallback title if empty
@@ -328,7 +397,8 @@ async function run() {
 
         if (exists && !isTruncated) {
           console.log(`[Terlewati] Artikel sudah ada dan lengkap: ${title}`);
-          continue;
+          success = true;
+          break;
         }
 
         if (isTruncated) {
@@ -364,7 +434,8 @@ async function run() {
             imgExt = parts[parts.length - 1];
           }
 
-          const imgName = `cover-${slug}.${imgExt}`;
+          const shortSlug = slug.slice(0, 50).replace(/-+$/, '');
+          const imgName = `cover-${shortSlug}.${imgExt}`;
           const destImgPath = path.join(publicImagesDir, imgName);
 
           try {
@@ -410,7 +481,8 @@ async function run() {
             imgExt = imgExt.split(/[?#]/)[0];
           }
 
-          const imgName = `content-${slug}-${inlineImgIndex}.${imgExt}`;
+          const shortSlug = slug.slice(0, 50).replace(/-+$/, '');
+          const imgName = `content-${shortSlug}-${inlineImgIndex}.${imgExt}`;
           const destImgPath = path.join(publicImagesDir, imgName);
           const relativePath = `/images/artikel/${imgName}`;
 
@@ -422,6 +494,11 @@ async function run() {
           }
         }
 
+        const cleanMarkdown = finalMarkdown
+          .replace(/୨>0<୧/g, '୨&gt;0&lt;୧')
+          .replace(/<--/g, '&lt;--')
+          .replace(/-->/g, '--&gt;')
+          .replace(/></g, '&gt;&lt;');
         const mdxContent = `---
 title: "${title.replace(/"/g, '\\"')}"
 description: "${descriptionText.replace(/"/g, '\\"')}"
@@ -432,19 +509,24 @@ sourceUrl: "${postUrl}"
 ${coverPath ? `cover: "${coverPath}"` : ''}
 ---
 
-${finalMarkdown}
+${cleanMarkdown}
 `;
 
         fs.writeFileSync(filePath, mdxContent, 'utf8');
         console.log(`[Sukses] Sinkronisasi artikel lengkap: ${title}`);
         newCount++;
+        success = true;
 
       } catch (err) {
-        console.error(`Gagal memproses artikel ${postUrl}: ${err.message}`);
+        console.error(`Gagal memproses artikel ${postUrl} (Percobaan ${attempts}/${maxAttempts}): ${err.message}`);
+        if (attempts >= maxAttempts) {
+          console.error(`[GAGAL PERMANEN] Melewati artikel ${postUrl} setelah ${maxAttempts} percobaan.`);
+        }
       } finally {
         await newPage.close();
       }
     }
+  }
 
     console.log(`\n===============================================`);
     console.log(`Sinkronisasi selesai! Berhasil menambahkan/memperbarui ${newCount} artikel baru dengan teks lengkap.`);

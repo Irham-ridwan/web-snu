@@ -10,6 +10,7 @@
     "preview": "astro preview",
     "astro": "astro",
     "sync-quora": "node scripts/sync-quora.cjs",
+    "sync-quora-py": "./venv/bin/python3 scripts/sync_quora_crawl4ai.py",
     "fetch-zyte": "node scripts/fetch-zyte-articles.js",
     "clean-mdx": "node scripts/clean-mdx.js"
   },

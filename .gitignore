@@ -1,43 +1,26 @@
-<<<<<<< HEAD
-# v0 sandbox internal files
-__v0_runtime_loader.js
-__v0_devtools.tsx
-__v0_jsx-dev-runtime.ts
-.snowflake/
-.v0-trash/
-.vercel/
+# Dependency directories
+node_modules/
+venv/
+.venv/
 
-# Environment variables
-.env*.local
-
-# Common ignores
-node_modules
-.next/
-.DS_Store
-=======
-### AL ###
-#Template for AL projects for Dynamics 365 Business Central
-#launch.json folder
-.vscode/
-#Cache folder
-.alcache/
-#Symbols folder
-.alpackages/
-#Snapshots folder
-.snapshots/
-#Testing Output folder
-.output/
-#Extension App-file
-*.app
-#Rapid Application Development File
-rad.json
-#Translation Base-file
-*.g.xlf
-#License-files
-*.bclicense
-*.flf
-#Test results file
-TestResults.xml
->>>>>>> 7489b32e00e8e667f899f9b8a7197cea922063cd
-.astro/
+# Build outputs
 dist/
+.astro/
+
+# Environment variables & secrets
+.env
+.env.local
+.env.production
+.env.development
+scripts/quora_cookies.json
+
+# Log & Diagnostic files
+*.log
+scripts/login-error.png
+scripts/inspect-*.cjs
+scripts/duckduckgo-search.cjs
+
+# Editor and OS directories
+.vscode/
+.DS_Store
+Thumbs.db

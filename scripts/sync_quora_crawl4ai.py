@@ -54,32 +54,89 @@ def parse_date(date_str):
     if not date_str:
         return today.isoformat()
     
-    clean_date = re.sub(r'Updated|Posted', '', date_str, flags=re.I).strip()
-    if 'ago' in clean_date.lower():
+    clean = re.sub(r'Updated|Posted|Diperbarui|Ditulis', '', date_str, flags=re.I).strip().lower()
+    if not clean:
         return today.isoformat()
         
-    months = {
-        'jan': 1, 'feb': 2, 'mar': 3, 'apr': 4, 'may': 5, 'jun': 6, 
-        'jul': 7, 'aug': 8, 'sep': 9, 'oct': 10, 'nov': 11, 'dec': 12
+    # Match relative formats like "9bln", "1thn", "3minggu", "4hari", "5jam", "10mnt", "9mo", "1y", "3w", "4d", "5h", "10m"
+    relative_match = re.match(r'^(\d+)\s*(thn|y|year|years|bln|mo|month|months|minggu|wk|w|week|weeks|hari|d|day|days|jam|h|hour|hours|mnt|m|min|minute|minutes|detik|s|sec|second|seconds)?(?:\s*lalu|\s*ago)?$', clean)
+    if relative_match:
+        val_str, unit = relative_match.groups()
+        value = int(val_str)
+        unit = unit.lower() if unit else ""
+        
+        if unit.startswith('thn') or unit == 'y' or unit.startswith('year'):
+            return (today - datetime.timedelta(days=value * 365)).isoformat()
+        elif unit.startswith('bln') or unit == 'mo' or unit.startswith('month'):
+            return (today - datetime.timedelta(days=value * 30)).isoformat()
+        elif unit.startswith('minggu') or unit == 'w' or unit == 'wk' or unit.startswith('week'):
+            return (today - datetime.timedelta(days=value * 7)).isoformat()
+        elif unit.startswith('hari') or unit == 'd' or unit.startswith('day'):
+            return (today - datetime.timedelta(days=value)).isoformat()
+        elif unit.startswith('jam') or unit == 'h' or unit.startswith('hour'):
+            return today.isoformat()
+        elif unit.startswith('mnt') or unit == 'm' or unit.startswith('min') or unit.startswith('minute'):
+            return today.isoformat()
+        elif unit.startswith('detik') or unit == 's' or unit.startswith('sec') or unit.startswith('second'):
+            return today.isoformat()
+            
+    months_map = {
+        'jan': 1, 'janari': 1, 'january': 1,
+        'feb': 2, 'peb': 2, 'februari': 2, 'february': 2,
+        'mar': 3, 'maret': 3, 'march': 3,
+        'apr': 4, 'april': 4,
+        'mei': 5, 'may': 5,
+        'jun': 6, 'juni': 6, 'june': 6,
+        'jul': 7, 'juli': 7, 'july': 7,
+        'agt': 8, 'aug': 8, 'agustus': 8, 'august': 8,
+        'sep': 9, 'september': 9,
+        'okt': 10, 'oct': 10, 'oktober': 10, 'october': 10,
+        'nov': 11, 'november': 11,
+        'des': 12, 'dec': 12, 'desember': 12, 'december': 12
     }
     
-    try:
-        # Format: "Jun 21, 2026"
-        m = re.match(r'([A-Za-z]+)\s+(\d+),\s+(\d+)', clean_date)
-        if m:
-            mon_str, day_str, yr_str = m.groups()
-            mon = months.get(mon_str.lower()[:3], 1)
-            return datetime.date(int(yr_str), mon, int(day_str)).isoformat()
-            
-        # Format: "Jun 21"
-        m = re.match(r'([A-Za-z]+)\s+(\d+)', clean_date)
-        if m:
-            mon_str, day_str = m.groups()
-            mon = months.get(mon_str.lower()[:3], 1)
-            return datetime.date(today.year, mon, int(day_str)).isoformat()
-    except Exception as e:
-        print(f"Error parsing date '{date_str}': {e}")
+    tokens = re.split(r'\s+', clean.replace(',', ' ').strip())
+    if len(tokens) >= 2:
+        day = None
+        month = None
+        year = today.year
         
+        token0_lower = tokens[0].lower()
+        token1_lower = tokens[1].lower()
+        
+        if token0_lower in months_map:
+            month = months_map[token0_lower]
+            try:
+                day = int(tokens[1])
+            except ValueError:
+                pass
+        elif token1_lower in months_map:
+            month = months_map[token1_lower]
+            try:
+                day = int(tokens[0])
+            except ValueError:
+                pass
+                
+        if month is not None and day is not None:
+            if len(tokens) >= 3:
+                try:
+                    parsed_year = int(tokens[2])
+                    if parsed_year > 2000:
+                        year = parsed_year
+                except ValueError:
+                    pass
+            else:
+                try:
+                    test_date = datetime.date(year, month, day)
+                    if test_date > today:
+                        year -= 1
+                except Exception:
+                    pass
+            try:
+                return datetime.date(year, month, day).isoformat()
+            except Exception:
+                pass
+                
     return today.isoformat()
 
 # Crawl Space links
@@ -188,18 +245,32 @@ async def crawl_article(crawler, url, cookies):
     slug = slugify(title)
     file_path = os.path.join(ARTICLES_DIR, f"{slug}.mdx")
     
-    # Check if article already exists and is complete
+    # Check if article already exists and is complete / has valid date
+    needs_update = False
     if os.path.exists(file_path):
         with open(file_path, 'r', encoding='utf-8') as f:
             content = f.read()
             if "PolitePaul" not in content and len(content) > 1500:
-                print(f"[Terlewati] Artikel sudah ada dan lengkap: {title}")
-                return True
+                date_match = re.search(r'publishDate:\s*"([^"]+)"', content)
+                if date_match and date_match.group(1).startswith('2026-06'):
+                    needs_update = True
+                else:
+                    print(f"[Terlewati] Artikel sudah ada, lengkap, dan tanggalnya valid: {title}")
+                    return True
+                    
+    if needs_update:
+        print(f"[Pembaruan] Memaksa pembaruan tanggal artikel dari Juni 2026 ke tanggal asli Quora: {title}")
                 
     print(f"Menyinkronkan artikel: {title}...")
     
     # Get publish date
-    date_el = soup.find(class_=re.compile("qu-color--gray_light"))
+    date_el = soup.select_one('.post_timestamp')
+    if not date_el:
+        path = urllib.parse.urlparse(url).path
+        date_el = soup.find('a', href=lambda h: h and path in h)
+    if not date_el:
+        date_el = soup.find(class_=re.compile("qu-color--gray_light"))
+        
     date_str = date_el.text.strip() if date_el else ""
     formatted_date = parse_date(date_str)
     

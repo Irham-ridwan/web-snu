@@ -21,11 +21,7 @@ const readTime = entry.body ? readingTime(entry.body) : Math.max(2, Math.round(d
 
 const href = `/artikel/${entry.id}`
 
-const fallbackCovers = [
-  coverTemple,
-  coverMeditation,
-]
-const finalCover = cover || fallbackCovers[entry.id.charCodeAt(0) % fallbackCovers.length]
+const finalCover = cover
 ---
 
 <article
@@ -59,7 +55,7 @@ const finalCover = cover || fallbackCovers[entry.id.charCodeAt(0) % fallbackCove
   <div 
     class:list={[
       "flex flex-1 flex-col gap-4 p-5 sm:p-6 rounded-[1.375rem] bg-[var(--color-surface-2)]/30 border border-[var(--color-border)]/40 mt-2",
-      cover && !featured && "mt-3",
+      finalCover && !featured && "mt-3",
       featured && "md:mt-0 md:ml-3 md:justify-center md:p-8 md:rounded-[1.8rem]",
     ]}
   >

@@ -27,11 +27,7 @@ const { title, description, author, publishDate, tags, seri, cover, draft, sourc
 const minutes = readingTime(rawBody)
 const toc: TocItem[] = buildToc(headings)
 
-const fallbackCovers = [
-  coverTemple,
-  coverMeditation,
-]
-const finalCover = cover || fallbackCovers[entry.id.charCodeAt(0) % fallbackCovers.length]
+const finalCover = cover
 ---
 
 <BaseLayout title={title} description={description} type="article" image={cover ? undefined : "/og-default.png"}>

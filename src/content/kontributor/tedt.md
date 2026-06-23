@@ -1,7 +1,7 @@
 ---
 name: Test
 slug: Tedt
-bio: .gg
+bio: .ggffffgg
 order: 99
 socials: []
 ---

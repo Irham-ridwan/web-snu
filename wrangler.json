@@ -1,6 +1,7 @@
 {
   "compatibility_flags": [
-    "nodejs_compat"
+    "nodejs_compat",
+    "nodejs_compat_populate_process_env"
   ],
   "compatibility_date": "2026-06-22"
 }

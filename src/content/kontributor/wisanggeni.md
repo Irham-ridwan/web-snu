@@ -3,7 +3,7 @@ name: "Wisanggeni"
 slug: "wisanggeni"
 role: "Kontributor & Penjelajah Spiritual"
 bio: "Penjelajah batin yang berdedikasi mengeksplorasi kesadaran batin, kebijaksanaan spiritual, dan dialog kesadaran lintas dimensi."
-avatar: "../../../public/placeholder-user.jpg"
+avatar: "../../../public/images/kontributor/placeholder-user.jpg"
 order: 3
 socials:
   - label: "Website"

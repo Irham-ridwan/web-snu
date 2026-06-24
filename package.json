@@ -13,7 +13,8 @@
     "sync-quora-py": "./venv/bin/python3 scripts/sync_quora_crawl4ai.py",
     "fetch-zyte": "node scripts/fetch-zyte-articles.js",
     "clean-mdx": "node scripts/clean-mdx.js",
-    "postinstall": "node scripts/patch-keystatic.cjs"
+    "postinstall": "node scripts/patch-keystatic.cjs",
+    "test": "vitest run"
   },
   "dependencies": {
     "@astrojs/cloudflare": "^12.0.0",
@@ -38,7 +39,9 @@
     "puppeteer": "^25.1.0",
     "puppeteer-extra": "^3.3.6",
     "puppeteer-extra-plugin-stealth": "^2.11.2",
-    "typescript": "^5.7.3"
+    "typescript": "^5.7.3",
+    "vite-tsconfig-paths": "^6.1.1",
+    "vitest": "^4.1.9"
   },
   "pnpm": {
     "onlyBuiltDependencies": [

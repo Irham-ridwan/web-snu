@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
-    "build": "astro build && node scripts/polyfill-cloudflare.cjs && pagefind --site dist",
+    "build": "rm -rf .astro && astro build && node scripts/polyfill-cloudflare.cjs && pagefind --site dist",
     "preview": "astro preview",
     "astro": "astro",
     "sync-quora": "node scripts/sync-quora.cjs",
